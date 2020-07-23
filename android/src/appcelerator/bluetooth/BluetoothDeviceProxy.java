@@ -5,8 +5,11 @@
  */
 package appcelerator.bluetooth;
 
+import android.app.Activity;
 import android.bluetooth.BluetoothDevice;
+import android.content.IntentFilter;
 import android.os.ParcelUuid;
+import appcelerator.bluetooth.Receivers.UUIDBroadcastReceiver;
 import org.appcelerator.kroll.KrollProxy;
 import org.appcelerator.kroll.annotations.Kroll;
 
@@ -15,6 +18,7 @@ public class BluetoothDeviceProxy extends KrollProxy
 {
 
 	private BluetoothDevice btDevice;
+	private UUIDBroadcastReceiver uuidReceiver = new UUIDBroadcastReceiver(this);
 
 	public BluetoothDeviceProxy(BluetoothDevice bluetoothDevice)
 	{
@@ -59,6 +63,16 @@ public class BluetoothDeviceProxy extends KrollProxy
 	@Kroll.method
 	public boolean fetchUUIDs()
 	{
+		IntentFilter intentFilter = new IntentFilter();
+		intentFilter.addAction(BluetoothDevice.ACTION_UUID);
+		getActivity().registerReceiver(uuidReceiver, intentFilter);
 		return btDevice.fetchUuidsWithSdp();
+	}
+
+	@Override
+	public void onDestroy(Activity activity)
+	{
+		getActivity().unregisterReceiver(uuidReceiver);
+		super.onDestroy(activity);
 	}
 }

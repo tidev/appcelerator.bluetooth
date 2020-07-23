@@ -6,13 +6,17 @@
 package appcelerator.bluetooth;
 
 import android.Manifest;
+import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.util.Log;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import appcelerator.bluetooth.Receivers.DiscoveryBroadcastReceiver;
+import appcelerator.bluetooth.Receivers.StateBroadcastReceiver;
 import java.util.Set;
 import org.appcelerator.kroll.KrollDict;
 import org.appcelerator.kroll.KrollModule;
@@ -51,11 +55,19 @@ public class BluetoothModule extends KrollModule
 
 	private final String bt_unsupported = "Bluetooth is not supported";
 	private final BluetoothAdapter btAdapter;
+	private StateBroadcastReceiver stateReceiver;
+	private DiscoveryBroadcastReceiver discoveryReceiver;
+	private IntentFilter intentFilter;
 
 	public BluetoothModule()
 	{
 		super();
 		btAdapter = BluetoothAdapter.getDefaultAdapter();
+		intentFilter = new IntentFilter();
+		intentFilter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
+		stateReceiver = new StateBroadcastReceiver(this);
+		discoveryReceiver = new DiscoveryBroadcastReceiver(this);
+		getActivity().registerReceiver(stateReceiver, intentFilter);
 	}
 
 	@Override
@@ -195,6 +207,10 @@ public class BluetoothModule extends KrollModule
 			Log.e(LCAT, "Required permission not granted");
 			return false;
 		}
+		intentFilter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
+		intentFilter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
+		intentFilter.addAction(BluetoothDevice.ACTION_FOUND);
+		getActivity().registerReceiver(discoveryReceiver, intentFilter);
 		return btAdapter.startDiscovery();
 	}
 
@@ -214,6 +230,7 @@ public class BluetoothModule extends KrollModule
 		if (isDiscovering()) {
 			return btAdapter.cancelDiscovery();
 		}
+		getActivity().unregisterReceiver(discoveryReceiver);
 		return false;
 	}
 
@@ -245,5 +262,12 @@ public class BluetoothModule extends KrollModule
 		Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
 		discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
 		getActivity().startActivity(discoverableIntent);
+	}
+
+	@Override
+	public void onDestroy(Activity activity)
+	{
+		getActivity().unregisterReceiver(stateReceiver);
+		super.onDestroy(activity);
 	}
 }
