@@ -9,9 +9,10 @@ import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.util.Log;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import java.util.Set;
 import org.appcelerator.kroll.KrollDict;
 import org.appcelerator.kroll.KrollModule;
@@ -87,7 +88,20 @@ public class BluetoothModule extends KrollModule
 			== PackageManager.PERMISSION_GRANTED
 			&& getActivity().getPackageManager().checkPermission(Manifest.permission.BLUETOOTH_ADMIN,
 																 getActivity().getPackageName())
+				   == PackageManager.PERMISSION_GRANTED
+			&& getActivity().getPackageManager().checkPermission(Manifest.permission.ACCESS_FINE_LOCATION,
+																 getActivity().getPackageName())
 				   == PackageManager.PERMISSION_GRANTED;
+	}
+
+	@Kroll.method
+	public void requestAccessFinePermission()
+	{
+		if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION)
+			!= PackageManager.PERMISSION_GRANTED) {
+			ActivityCompat.requestPermissions(getActivity(), new String[] { Manifest.permission.ACCESS_FINE_LOCATION },
+											  1);
+		}
 	}
 
 	/**
@@ -168,6 +182,39 @@ public class BluetoothModule extends KrollModule
 		devices.put("success", false);
 		devices.put("message", "No Device Found");
 		return devices;
+	}
+
+	@Kroll.method
+	public boolean startDiscovery()
+	{
+		if (!isEnabled()) {
+			Log.e(LCAT, "Bluetooth is disabled");
+			return false;
+		}
+		if (!isRequiredPermissionsGranted()) {
+			Log.e(LCAT, "Required permission not granted");
+			return false;
+		}
+		return btAdapter.startDiscovery();
+	}
+
+	@Kroll.method
+	public boolean isDiscovering()
+	{
+		if (!isSupported()) {
+			Log.e(LCAT, bt_unsupported);
+			return false;
+		}
+		return btAdapter.isDiscovering();
+	}
+
+	@Kroll.method
+	public boolean cancelDiscovery()
+	{
+		if (isDiscovering()) {
+			return btAdapter.cancelDiscovery();
+		}
+		return false;
 	}
 
 	@Kroll.getProperty
