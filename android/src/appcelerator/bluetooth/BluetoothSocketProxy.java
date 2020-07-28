@@ -13,6 +13,7 @@ import java.util.UUID;
 import org.appcelerator.kroll.KrollDict;
 import org.appcelerator.kroll.KrollProxy;
 import org.appcelerator.kroll.annotations.Kroll;
+import ti.modules.titanium.BufferProxy;
 
 @Kroll.proxy
 public class BluetoothSocketProxy extends KrollProxy
@@ -157,6 +158,16 @@ public class BluetoothSocketProxy extends KrollProxy
 	public BluetoothDeviceProxy getRemoteDevice()
 	{
 		return new BluetoothDeviceProxy(btSocket.getRemoteDevice());
+	}
+
+	@Kroll.method
+	public void write(BufferProxy bufferProxy)
+	{
+		if (!isConnected()) {
+			Log.e(LCAT, "attempt to write data, but socket not connected. SocketState = " + state);
+		}
+
+		readerWriter.write(bufferProxy);
 	}
 
 	private enum socketState { connecting, connected, disconnected, open, error }

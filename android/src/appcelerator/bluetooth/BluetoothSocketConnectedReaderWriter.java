@@ -10,12 +10,15 @@ import android.bluetooth.BluetoothSocket;
 import android.util.Log;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import ti.modules.titanium.BufferProxy;
 
 @SuppressLint("LongLogTag")
 class BluetoothSocketConnectedReaderWriter
 {
 
 	private final InputStream inputStream;
+	private final OutputStream outputStream;
 	private volatile boolean isClosed = false;
 
 	private static final String TAG = "BluetoothSocketConnectedReaderWriter";
@@ -23,6 +26,7 @@ class BluetoothSocketConnectedReaderWriter
 	BluetoothSocketConnectedReaderWriter(BluetoothSocket socket) throws IOException
 	{
 		this.inputStream = socket.getInputStream();
+		this.outputStream = socket.getOutputStream();
 
 		init();
 	}
@@ -49,6 +53,20 @@ class BluetoothSocketConnectedReaderWriter
 		readThread.start();
 	}
 
+	void write(BufferProxy bufferProxy)
+	{
+		if (isClosed) {
+			Log.d(TAG, "trying to write on the stream, but streams already been closed.");
+			return;
+		}
+
+		try {
+			outputStream.write(bufferProxy.getBuffer());
+		} catch (IOException e) {
+			Log.e(TAG, "exception while writing data on the stream.", e);
+		}
+	}
+
 	void close()
 	{
 		if (isClosed) {
@@ -62,6 +80,11 @@ class BluetoothSocketConnectedReaderWriter
 			inputStream.close();
 		} catch (IOException e) {
 			Log.e(TAG, "exception while closing inputstream", e);
+		}
+		try {
+			outputStream.close();
+		} catch (IOException e) {
+			Log.e(TAG, "exception while closing outputstream", e);
 		}
 	}
 }
