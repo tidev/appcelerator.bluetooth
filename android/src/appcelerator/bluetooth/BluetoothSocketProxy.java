@@ -26,6 +26,7 @@ public class BluetoothSocketProxy extends KrollProxy implements BluetoothSocketC
 	private Thread connectThread;
 	private BluetoothSocketConnectedReaderWriter readerWriter;
 	private socketState state = socketState.open;
+	private short readBufferSizeInBytes = 4 * 1024;
 
 	public BluetoothSocketProxy(BluetoothSocket bluetoothSocket, String uuid, boolean secure,
 								BluetoothDevice bluetoothDevice) throws IOException
@@ -38,7 +39,7 @@ public class BluetoothSocketProxy extends KrollProxy implements BluetoothSocketC
 		if (isConnected()) {
 			state = socketState.connected;
 			try {
-				readerWriter = new BluetoothSocketConnectedReaderWriter(btSocket, this);
+				readerWriter = new BluetoothSocketConnectedReaderWriter(btSocket, readBufferSizeInBytes, this);
 			} catch (IOException e) {
 				Log.e(LCAT, "Exception while creating bluetooth socket reader/writer.", e);
 				closeSocketQuietly(btSocket);
@@ -62,7 +63,7 @@ public class BluetoothSocketProxy extends KrollProxy implements BluetoothSocketC
 				state = socketState.connected;
 				dict.put("socket", this);
 				fireEvent("connected", dict);
-				readerWriter = new BluetoothSocketConnectedReaderWriter(btSocket, this);
+				readerWriter = new BluetoothSocketConnectedReaderWriter(btSocket, readBufferSizeInBytes, this);
 			} catch (IOException connectException) {
 				Log.e(LCAT, "Exception on connect.", connectException);
 				if (isConnected()) {
@@ -168,6 +169,20 @@ public class BluetoothSocketProxy extends KrollProxy implements BluetoothSocketC
 		}
 
 		readerWriter.write(bufferProxy);
+	}
+
+	@Kroll.method
+	@Kroll.setProperty
+	public void setReadBufferSize(short newReadBufferSize)
+	{
+		this.readBufferSizeInBytes = newReadBufferSize;
+	}
+
+	@Kroll.method
+	@Kroll.getProperty
+	public short getReadBufferSize()
+	{
+		return readBufferSizeInBytes;
 	}
 
 	@Override

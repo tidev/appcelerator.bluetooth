@@ -24,20 +24,21 @@ class BluetoothSocketConnectedReaderWriter
 
 	private static final String TAG = "BluetoothSocketConnectedReaderWriter";
 
-	BluetoothSocketConnectedReaderWriter(BluetoothSocket socket, IEventListener listener) throws IOException
+	BluetoothSocketConnectedReaderWriter(BluetoothSocket socket, short readBufferSizeInBytes, IEventListener listener)
+		throws IOException
 	{
 		this.inputStream = socket.getInputStream();
 		this.outputStream = socket.getOutputStream();
 		this.listener = listener;
 
-		init();
+		init(readBufferSizeInBytes);
 	}
 
-	private void init()
+	private void init(short readBufferSizeInBytes)
 	{
 
 		Thread readThread = new Thread(() -> {
-			byte[] buffer = new byte[4096];
+			byte[] buffer = new byte[readBufferSizeInBytes];
 
 			while (!isClosed) {
 				try {
