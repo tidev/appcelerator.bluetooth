@@ -19,14 +19,16 @@ class BluetoothSocketConnectedReaderWriter
 
 	private final InputStream inputStream;
 	private final OutputStream outputStream;
+	private IEventListener listener;
 	private volatile boolean isClosed = false;
 
 	private static final String TAG = "BluetoothSocketConnectedReaderWriter";
 
-	BluetoothSocketConnectedReaderWriter(BluetoothSocket socket) throws IOException
+	BluetoothSocketConnectedReaderWriter(BluetoothSocket socket, IEventListener listener) throws IOException
 	{
 		this.inputStream = socket.getInputStream();
 		this.outputStream = socket.getOutputStream();
+		this.listener = listener;
 
 		init();
 	}
@@ -40,13 +42,18 @@ class BluetoothSocketConnectedReaderWriter
 			while (!isClosed) {
 				try {
 					int read = inputStream.read(buffer);
+					BufferProxy bufferProxy = new BufferProxy();
+					bufferProxy.write(0, buffer, 0, read);
+					listener.onDataReceived(bufferProxy);
 				} catch (IOException e) {
 					if (isClosed) {
 						// exception while reading occurred due to closing the stream.
 						return;
 					}
 					Log.e(TAG, "Exception while reading the inputstream.", e);
+					IEventListener tempListener = listener;
 					close();
+					tempListener.onStreamError(e);
 				}
 			}
 		});
@@ -74,6 +81,7 @@ class BluetoothSocketConnectedReaderWriter
 			return;
 		}
 
+		listener = null;
 		isClosed = true;
 
 		try {
@@ -86,5 +94,10 @@ class BluetoothSocketConnectedReaderWriter
 		} catch (IOException e) {
 			Log.e(TAG, "exception while closing outputstream", e);
 		}
+	}
+
+	public interface IEventListener {
+		void onDataReceived(BufferProxy proxy);
+		void onStreamError(IOException e);
 	}
 }

@@ -16,7 +16,7 @@ import org.appcelerator.kroll.annotations.Kroll;
 import ti.modules.titanium.BufferProxy;
 
 @Kroll.proxy
-public class BluetoothSocketProxy extends KrollProxy
+public class BluetoothSocketProxy extends KrollProxy implements BluetoothSocketConnectedReaderWriter.IEventListener
 {
 	private static final String LCAT = "BluetoothSocketProxy";
 	private BluetoothSocket btSocket;
@@ -38,7 +38,7 @@ public class BluetoothSocketProxy extends KrollProxy
 		if (isConnected()) {
 			state = socketState.connected;
 			try {
-				readerWriter = new BluetoothSocketConnectedReaderWriter(btSocket);
+				readerWriter = new BluetoothSocketConnectedReaderWriter(btSocket, this);
 			} catch (IOException e) {
 				Log.e(LCAT, "Exception while creating bluetooth socket reader/writer.", e);
 				closeSocketQuietly(btSocket);
@@ -62,7 +62,7 @@ public class BluetoothSocketProxy extends KrollProxy
 				state = socketState.connected;
 				dict.put("socket", this);
 				fireEvent("connected", dict);
-				readerWriter = new BluetoothSocketConnectedReaderWriter(btSocket);
+				readerWriter = new BluetoothSocketConnectedReaderWriter(btSocket, this);
 			} catch (IOException connectException) {
 				Log.e(LCAT, "Exception on connect.", connectException);
 				if (isConnected()) {
@@ -168,6 +168,26 @@ public class BluetoothSocketProxy extends KrollProxy
 		}
 
 		readerWriter.write(bufferProxy);
+	}
+
+	@Override
+	public void onDataReceived(BufferProxy proxy)
+	{
+		KrollDict dict = new KrollDict();
+		dict.put("socket", this);
+		dict.put("data", proxy);
+		fireEvent("receivedData", dict);
+	}
+
+	@Override
+	public void onStreamError(IOException e)
+	{
+		closeSocketQuietly(btSocket);
+		state = socketState.error;
+		KrollDict dict = new KrollDict();
+		dict.put("socket", this);
+		dict.put("errorMessage", e.getMessage());
+		fireEvent("error", dict);
 	}
 
 	private enum socketState { connecting, connected, disconnected, open, error }
