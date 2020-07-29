@@ -37,7 +37,7 @@ public class BluetoothServerSocketProxy extends KrollProxy
 
 	@SuppressLint("MissingPermission")
 	@Kroll.method
-	public void startAccept()
+	public void startAccept(@Kroll.argument(optional = true) boolean keepListening)
 	{
 
 		if (state != ServerSocketState.Open) {
@@ -63,11 +63,14 @@ public class BluetoothServerSocketProxy extends KrollProxy
 
 		// thread.
 		new Thread(() -> {
-			try {
-				BluetoothSocket socket = serverSocket.accept();
-			} catch (IOException e) {
-				Log.e(TAG, "startAccept: exception", e);
-			}
+			do {
+				try {
+					BluetoothSocket socket = serverSocket.accept();
+				} catch (IOException e) {
+					Log.e(TAG, "startAccept: exception", e);
+				}
+			} while (keepListening && state == ServerSocketState.Accepting);
+
 			if (state != ServerSocketState.Closed) {
 				setState(ServerSocketState.Open);
 			}
