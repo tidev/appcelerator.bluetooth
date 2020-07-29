@@ -34,6 +34,9 @@ public class BluetoothSocketProxy extends KrollProxy
 		this.uuid = uuid;
 		this.isSecure = secure;
 		this.bluetoothDevice = bluetoothDevice;
+		if (isConnected()) {
+			state = socketState.connected;
+		}
 	}
 
 	@Kroll.method
@@ -125,6 +128,12 @@ public class BluetoothSocketProxy extends KrollProxy
 			fireEvent("error", dict);
 			Log.e(LCAT, "Cannot close, Exception: " + e.getMessage());
 		}
+	}
+
+	@Kroll.method
+	public BluetoothDeviceProxy getRemoteDevice()
+	{
+		return new BluetoothDeviceProxy(btSocket.getRemoteDevice());
 	}
 
 	private enum socketState { connecting, connected, disconnected, open, error }
