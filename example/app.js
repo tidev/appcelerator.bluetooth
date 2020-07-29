@@ -108,11 +108,47 @@ if (isAndroid) {
 		devicePage.open();
 	});
 
+	var serverBtn = Ti.UI.createButton({
+		title: 'SERVER',
+		top: '85%',
+		height: '10%',
+		width: '80%'
+	});
+
+	serverBtn.addEventListener('click', function () {
+
+		if (!bluetooth.isSupported()) {
+			alert('bluetooth not supported on this device.');
+			return;
+		}
+
+		if (!bluetooth.isRequiredPermissionsGranted()) {
+			alert('required permissions not granted.');
+			return;
+		}
+
+		if (!bluetooth.isEnabled()) {
+			alert('bluetooth not enabled.');
+			return;
+		}
+
+		var serverSocket = bluetooth.createServerSocket({
+			name: 'Test_Server_Socket',
+			uuid: '8ce255c0-200a-11e0-ac64-0800200c9a66',
+			secure: true
+		});
+
+		var Server = require('serversocket.js');
+		var serverPage = new Server(serverSocket);
+		serverPage.open();
+	});
+
 	win.add(checkBTSupported);
 	win.add(checkBTEnabled);
 	win.add(checkBTPermissionsGranted);
 	win.add(makeDiscoverBtn);
 	win.add(requestLocationPermissionBtn);
 	win.add(deviceInfo);
+	win.add(serverBtn);
 }
 win.open();
