@@ -12,6 +12,7 @@ import android.bluetooth.BluetoothSocket;
 import android.util.Log;
 import java.io.IOException;
 import java.util.UUID;
+import org.appcelerator.kroll.KrollDict;
 import org.appcelerator.kroll.KrollProxy;
 import org.appcelerator.kroll.annotations.Kroll;
 
@@ -19,6 +20,7 @@ import org.appcelerator.kroll.annotations.Kroll;
 @SuppressLint("LongLogTag")
 public class BluetoothServerSocketProxy extends KrollProxy
 {
+
 	private final String name;
 	private final String uuid;
 	private final boolean isSecure;
@@ -26,6 +28,8 @@ public class BluetoothServerSocketProxy extends KrollProxy
 	private volatile ServerSocketState state = ServerSocketState.Open;
 	private volatile BluetoothServerSocket serverSocket;
 
+	private final String eventErrorKey = "errorMessage";
+	private final String eventConnectionReceivedKey = "socket";
 	private final String TAG = "BluetoothServerSocketProxy";
 
 	public BluetoothServerSocketProxy(String name, String uuid, boolean isSecure)
@@ -66,8 +70,17 @@ public class BluetoothServerSocketProxy extends KrollProxy
 			do {
 				try {
 					BluetoothSocket socket = serverSocket.accept();
+					KrollDict dict = new KrollDict();
+					dict.put(eventConnectionReceivedKey, new BluetoothSocketProxy(socket, null, false, null));
+					fireEvent("connectionReceived", dict);
 				} catch (IOException e) {
 					Log.e(TAG, "startAccept: exception", e);
+					if (state != ServerSocketState.Stopping && state != ServerSocketState.Closed) {
+						KrollDict dict = new KrollDict();
+						dict.put(eventErrorKey,
+								 "Exception while accepting socket connection. Exception Details = " + e.getMessage());
+						fireEvent("error", dict);
+					}
 				}
 			} while (keepListening && state == ServerSocketState.Accepting);
 
