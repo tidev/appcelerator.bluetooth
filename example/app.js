@@ -5,14 +5,18 @@ var win = Titanium.UI.createWindow({
 
 // require bluetooth
 var bluetooth = require('appcelerator.bluetooth');
+global.bluetooth = bluetooth;
 var isAndroid = Ti.Platform.osname === 'android';
 if (isAndroid) {
 	var checkBTSupported = Ti.UI.createButton({
 		title: 'Check Bluetooth support',
-		top: '10%',
+		top: '5%',
 		height: '10%',
 		width: '80%'
 	});
+
+	var devices = require('devices.js');
+	var devicePage = new devices.deviceWin();
 
 	checkBTSupported.addEventListener('click', function () {
 		Ti.API.info('Verifying Bluetooth support');
@@ -27,7 +31,7 @@ if (isAndroid) {
 
 	var checkBTEnabled = Ti.UI.createButton({
 		title: 'Check Bluetooth Status',
-		top: '25%',
+		top: '17%',
 		height: '10%',
 		width: '80%'
 	});
@@ -45,7 +49,7 @@ if (isAndroid) {
 
 	var checkBTPermissionsGranted = Ti.UI.createButton({
 		title: 'Check Bluetooth Permissions',
-		top: '40%',
+		top: '29%',
 		height: '10%',
 		width: '80%'
 	});
@@ -61,8 +65,54 @@ if (isAndroid) {
 		}
 	});
 
+	bluetooth.addEventListener('stateChanged', function (e) {
+		Ti.API.info(e.message);
+		alert(e.message);
+	});
+
+	var requestLocationPermissionBtn = Ti.UI.createButton({
+		title: 'Request Permission',
+		top: '41%',
+		height: '10%',
+		width: '80%'
+	});
+
+	requestLocationPermissionBtn.addEventListener('click', function () {
+		if (!bluetooth.isRequiredPermissionsGranted()) {
+			bluetooth.requestAccessFinePermission();
+		} else {
+			alert('Required Permission is already granted');
+			Ti.API.info('Required Permission is already granted');
+		}
+	});
+
+	var makeDiscoverBtn = Ti.UI.createButton({
+		title: 'Make Device Discoverable',
+		top: '53%',
+		height: '10%',
+		width: '80%'
+	});
+
+	makeDiscoverBtn.addEventListener('click', function () {
+		bluetooth.ensureDiscoverable();
+	});
+
+	var deviceInfo = Ti.UI.createButton({
+		title: 'Paired/Scan Devices',
+		top: '65%',
+		height: '10%',
+		width: '80%'
+	});
+
+	deviceInfo.addEventListener('click', function () {
+		devicePage.open();
+	});
+
 	win.add(checkBTSupported);
 	win.add(checkBTEnabled);
 	win.add(checkBTPermissionsGranted);
+	win.add(makeDiscoverBtn);
+	win.add(requestLocationPermissionBtn);
+	win.add(deviceInfo);
 }
 win.open();

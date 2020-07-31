@@ -259,15 +259,21 @@ public class BluetoothModule extends KrollModule
 	@Kroll.method
 	public void ensureDiscoverable()
 	{
-		Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-		discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
-		getActivity().startActivity(discoverableIntent);
+		if (btAdapter.getScanMode() != SCAN_MODE_CONNECTABLE_DISCOVERABLE) {
+			Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+			discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
+			getActivity().startActivity(discoverableIntent);
+		}
 	}
 
 	@Override
 	public void onDestroy(Activity activity)
 	{
-		getActivity().unregisterReceiver(stateReceiver);
+		try {
+			getActivity().unregisterReceiver(stateReceiver);
+		} catch (IllegalArgumentException e) {
+			Log.w(LCAT, e.getMessage());
+		}
 		super.onDestroy(activity);
 	}
 }
