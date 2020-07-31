@@ -9,6 +9,8 @@ function deviceWin() {
 		}
 	});
 
+	var clientSocket = require('client_socket.js');
+
 	var deviceInfoRow;
 	var tableData = [];
 	var device;
@@ -89,6 +91,10 @@ function deviceWin() {
 		deviceInfoRow = Ti.UI.createTableViewRow({
 			title: '\n' + device.name + '\n' + device.address,
 			color: 'black'
+		});
+		deviceInfoRow.addEventListener('click', function () {
+			var clientSocketPage = new clientSocket(e.device);
+			clientSocketPage.open();
 		});
 		tableData.push(deviceInfoRow);
 		tableView.data = tableData;
