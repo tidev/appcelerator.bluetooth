@@ -1,3 +1,4 @@
+/* eslint-disable no-alert */
 var win = Titanium.UI.createWindow({
 	backgroundColor: '#FFFFFF'
 });
@@ -145,6 +146,31 @@ if (isAndroid) {
 		stateChangedToast.show();
 	});
 
+	var btDevicesSection = Ti.UI.createTableViewSection({ headerTitle: 'Bluetooth Devices',
+		color: 'black' });
+
+	var btDevicesRow = Ti.UI.createTableViewRow({
+		height: 50,
+		title: 'Bluetooth Paired/Scan Devices',
+		color: 'black',
+		hasChild: true
+	});
+
+	var devices = require('devices.js');
+
+	btDevicesRow.addEventListener('click', function () {
+		if (!bluetooth.isEnabled()) {
+			alert('Bluetooth is Disabled');
+			return;
+		}
+		if (!bluetooth.isSupported()) {
+			alert('Bluetooth is not supported');
+			return;
+		}
+		var devicePage = new devices.deviceWin();
+		devicePage.open();
+	});
+
 	btEnabledRow.add(btEnabledlabel);
 	btEnabledRow.add(btEnabledbutton);
 	btCheckPermissions.add(btPermissionlabel);
@@ -155,7 +181,9 @@ if (isAndroid) {
 	btRequiredSettingsSection.add(btEnabledRow);
 	btRequiredSettingsSection.add(btCheckPermissions);
 	btRequiredSettingsSection.add(btRequestLocationPermission);
+	btDevicesSection.add(btDevicesRow);
 	tbl_data.push(btRequiredSettingsSection);
+	tbl_data.push(btDevicesSection);
 	table.setData(tbl_data);
 
 	win.add(table);
