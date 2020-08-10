@@ -1,4 +1,3 @@
-/* eslint-disable no-alert */
 var win = Titanium.UI.createWindow({
 	backgroundColor: '#FFFFFF'
 });
@@ -8,147 +7,157 @@ var bluetooth = require('appcelerator.bluetooth');
 global.bluetooth = bluetooth;
 var isAndroid = Ti.Platform.osname === 'android';
 if (isAndroid) {
-	var checkBTSupported = Ti.UI.createButton({
-		title: 'Check Bluetooth support',
-		top: '5%',
-		height: '10%',
-		width: '80%'
+	var table = new Titanium.UI.createTableView({
+		scrollable: true,
+		top: 0,
+		backgroundColor: '#FFFFFF',
+		separatorColor: '#DBE1E2'
 	});
 
-	var devices = require('devices.js');
-	var devicePage = new devices.deviceWin();
+	var tbl_data = [];
 
-	checkBTSupported.addEventListener('click', function () {
+	var btRequiredSettingsSection = Ti.UI.createTableViewSection({ headerTitle: 'Bluetooth Prerequities',
+		color: 'black' });
+	var btSupportedRow = Ti.UI.createTableViewRow({
+		height: 50,
+		title: 'Bluetooth Support',
+		color: 'black',
+		hasCheck: bluetooth.isSupported()
+	});
+
+	btSupportedRow.addEventListener('click', function () {
 		Ti.API.info('Verifying Bluetooth support');
+		var supportedToast = Ti.UI.createNotification({
+			duration: Ti.UI.NOTIFICATION_DURATION_LONG
+		});
 		if (bluetooth.isSupported()) {
 			Ti.API.info('Bluetooth supported = true');
-			alert('Bluetooth support available on this device');
+			supportedToast.message = 'Bluetooth support available on this device';
+			supportedToast.show();
 		} else {
 			Ti.API.info('Bluetooth supported = false');
-			alert('Bluetooth is not supported on this device');
+			supportedToast.message = 'Bluetooth is not supported on this device';
+			supportedToast.show();
 		}
 	});
 
-	var checkBTEnabled = Ti.UI.createButton({
-		title: 'Check Bluetooth Status',
-		top: '17%',
-		height: '10%',
-		width: '80%'
+	var btEnabledRow = Ti.UI.createTableViewRow({
+		height: 50
 	});
 
-	checkBTEnabled.addEventListener('click', function () {
+	var btEnabledlabel = Ti.UI.createLabel({
+		left: 5,
+		text: 'Bluetooth Enabled',
+		color: 'black'
+	});
+
+	var btEnabledbutton = Ti.UI.createButton({
+		right: 10,
+		height: 40,
+		width: 100,
+		title: 'Check'
+	});
+
+	btEnabledbutton.addEventListener('click', function () {
 		Ti.API.info('Checking Bluetooth status');
+		var enabledToast = Ti.UI.createNotification({
+			duration: Ti.UI.NOTIFICATION_DURATION_LONG
+		});
 		if (bluetooth.isEnabled()) {
-			alert('Bluetooth is enabled');
+			enabledToast.message = 'Bluetooth is enabled';
+			enabledToast.show();
 			Ti.API.info('Bluetooth enabled');
 		} else {
-			alert('Bluetooth is disabled');
+			enabledToast.message = 'Bluetooth is disabled';
+			enabledToast.show();
 			Ti.API.info('Bluetooth disabled');
 		}
 	});
 
-	var checkBTPermissionsGranted = Ti.UI.createButton({
-		title: 'Check Bluetooth Permissions',
-		top: '29%',
-		height: '10%',
-		width: '80%'
+	var btCheckPermissions = Ti.UI.createTableViewRow({
+		height: 50
 	});
 
-	checkBTPermissionsGranted.addEventListener('click', function () {
-		Ti.API.info('Checking Bluetooth permissions');
+	var btPermissionlabel = Ti.UI.createLabel({
+		left: 5,
+		text: 'Bluetooth Permissions',
+		color: 'black'
+	});
+
+	var btPermissionbutton = Ti.UI.createButton({
+		right: 10,
+		height: 40,
+		width: 100,
+		title: 'Check'
+	});
+
+	btPermissionbutton.addEventListener('click', function () {
+		var permissionToast = Ti.UI.createNotification({
+			duration: Ti.UI.NOTIFICATION_DURATION_LONG
+		});
 		if (bluetooth.isRequiredPermissionsGranted()) {
-			alert('Bluetooth Permissions has been granted');
+			permissionToast.message = 'Bluetooth Permissions has been granted';
+			permissionToast.show();
 			Ti.API.info('Permission Granted');
 		} else {
-			alert('Bluetooth Permissions grant failed');
+			permissionToast.message = 'Bluetooth Permissions grant failed';
+			permissionToast.show();
 			Ti.API.info('Permission Granted Fail');
+		}
+	});
+
+	var btRequestLocationPermission = Ti.UI.createTableViewRow({
+		height: 50
+	});
+
+	var btRequestPermissionlabel = Ti.UI.createLabel({
+		left: 5,
+		text: 'Request Location Permission',
+		color: 'black'
+	});
+
+	var btRequestPermissionbutton = Ti.UI.createButton({
+		right: 10,
+		height: 40,
+		width: 100,
+		title: 'Request'
+	});
+
+	btRequestPermissionbutton.addEventListener('click', function () {
+		var requestPermissionToast = Ti.UI.createNotification({
+			duration: Ti.UI.NOTIFICATION_DURATION_LONG
+		});
+		if (!bluetooth.isRequiredPermissionsGranted()) {
+			bluetooth.requestAccessFinePermission();
+		} else {
+			requestPermissionToast.message = 'Required Permission is already granted';
+			requestPermissionToast.show();
+			Ti.API.info('Required Permission is already granted');
 		}
 	});
 
 	bluetooth.addEventListener('stateChanged', function (e) {
 		Ti.API.info(e.message);
-		alert(e.message);
-	});
-
-	var requestLocationPermissionBtn = Ti.UI.createButton({
-		title: 'Request Permission',
-		top: '41%',
-		height: '10%',
-		width: '80%'
-	});
-
-	requestLocationPermissionBtn.addEventListener('click', function () {
-		if (!bluetooth.isRequiredPermissionsGranted()) {
-			bluetooth.requestAccessFinePermission();
-		} else {
-			alert('Required Permission is already granted');
-			Ti.API.info('Required Permission is already granted');
-		}
-	});
-
-	var makeDiscoverBtn = Ti.UI.createButton({
-		title: 'Make Device Discoverable',
-		top: '53%',
-		height: '10%',
-		width: '80%'
-	});
-
-	makeDiscoverBtn.addEventListener('click', function () {
-		bluetooth.ensureDiscoverable();
-	});
-
-	var deviceInfo = Ti.UI.createButton({
-		title: 'Paired/Scan Devices',
-		top: '65%',
-		height: '10%',
-		width: '80%'
-	});
-
-	deviceInfo.addEventListener('click', function () {
-		devicePage.open();
-	});
-
-	var serverBtn = Ti.UI.createButton({
-		title: 'SERVER',
-		top: '85%',
-		height: '10%',
-		width: '80%'
-	});
-
-	serverBtn.addEventListener('click', function () {
-
-		if (!bluetooth.isSupported()) {
-			alert('bluetooth not supported on this device.');
-			return;
-		}
-
-		if (!bluetooth.isRequiredPermissionsGranted()) {
-			alert('required permissions not granted.');
-			return;
-		}
-
-		if (!bluetooth.isEnabled()) {
-			alert('bluetooth not enabled.');
-			return;
-		}
-
-		var serverSocket = bluetooth.createServerSocket({
-			name: 'Test_Server_Socket',
-			uuid: '8ce255c0-200a-11e0-ac64-0800200c9a66',
-			secure: true
+		var stateChangedToast = Ti.UI.createNotification({
+			message: e.message,
+			duration: Ti.UI.NOTIFICATION_DURATION_LONG
 		});
-
-		var Server = require('serversocket.js');
-		var serverPage = new Server(serverSocket);
-		serverPage.open();
+		stateChangedToast.show();
 	});
 
-	win.add(checkBTSupported);
-	win.add(checkBTEnabled);
-	win.add(checkBTPermissionsGranted);
-	win.add(makeDiscoverBtn);
-	win.add(requestLocationPermissionBtn);
-	win.add(deviceInfo);
-	win.add(serverBtn);
+	btEnabledRow.add(btEnabledlabel);
+	btEnabledRow.add(btEnabledbutton);
+	btCheckPermissions.add(btPermissionlabel);
+	btCheckPermissions.add(btPermissionbutton);
+	btRequestLocationPermission.add(btRequestPermissionlabel);
+	btRequestLocationPermission.add(btRequestPermissionbutton);
+	btRequiredSettingsSection.add(btSupportedRow);
+	btRequiredSettingsSection.add(btEnabledRow);
+	btRequiredSettingsSection.add(btCheckPermissions);
+	btRequiredSettingsSection.add(btRequestLocationPermission);
+	tbl_data.push(btRequiredSettingsSection);
+	table.setData(tbl_data);
+
+	win.add(table);
 }
 win.open();
