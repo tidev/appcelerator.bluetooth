@@ -20,6 +20,7 @@ function deviceWin() {
 
 	var tbl_data = [];
 	var deviceFoundRow;
+	var clientSocket = require('client_socket.js');
 
 	var btDeviceDiscoverableSection = Ti.UI.createTableViewSection({
 		headerTitle: 'Device Discoverable',
@@ -71,7 +72,9 @@ function deviceWin() {
 			var device = pdevices[index];
 			deviceInfoRow = Ti.UI.createTableViewRow({
 				title: '\n' + device.name + '\n' + device.address,
-				color: 'black'
+				id: device.address,
+				color: 'black',
+				hasChild: true
 			});
 			Ti.API.info(device.name + '\n' + device.address);
 			btPairedDevicesSection.add(deviceInfoRow);
@@ -83,6 +86,14 @@ function deviceWin() {
 		});
 		btPairedDevicesSection.add(deviceInfoRow);
 	}
+
+	btPairedDevicesSection.addEventListener('click', function (e) {
+		var indexRow = e.source;
+		if (indexRow.hasChild) {
+			var clientSocketPage = new clientSocket(bluetooth.getRemoteDevice(indexRow.id));
+			clientSocketPage.open();
+		}
+	});
 
 	var btAvailableDevicesSection = Ti.UI.createTableViewSection({
 		headerTitle: 'Available Devices',
@@ -168,11 +179,21 @@ function deviceWin() {
 		var device = e.device;
 		deviceFoundRow = Ti.UI.createTableViewRow({
 			title: '\n' + device.name + '\n' + device.address,
-			color: 'black'
+			color: 'black',
+			id: device.address,
+			hasChild: true
 		});
 		Ti.API.info(device.name + '\n' + device.address);
 		table.appendRow(deviceFoundRow);
 
+	});
+
+	btDevicesListSection.addEventListener('click', function (e) {
+		var indexRow = e.source;
+		if (indexRow.hasChild) {
+			var clientSocketPage = new clientSocket(bluetooth.getRemoteDevice(indexRow.id));
+			clientSocketPage.open();
+		}
 	});
 
 	btDeviceDiscoverableRow.add(btDeviceDiscoverablelabel);
