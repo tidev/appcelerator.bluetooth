@@ -18,7 +18,9 @@ if (isAndroid) {
 	var tbl_data = [];
 
 	var btRequiredSettingsSection = Ti.UI.createTableViewSection({ headerTitle: 'Bluetooth Prerequities',
-		color: 'black' });
+		color: 'black'
+	});
+
 	var btSupportedRow = Ti.UI.createTableViewRow({
 		height: 50,
 		title: 'Bluetooth Support',
@@ -147,7 +149,8 @@ if (isAndroid) {
 	});
 
 	var btDevicesSection = Ti.UI.createTableViewSection({ headerTitle: 'Bluetooth Devices',
-		color: 'black' });
+		color: 'black'
+	});
 
 	var btDevicesRow = Ti.UI.createTableViewRow({
 		height: 50,
@@ -171,6 +174,42 @@ if (isAndroid) {
 		devicePage.open();
 	});
 
+	var btServerSection = Ti.UI.createTableViewSection({ headerTitle: 'Bluetooth Connection',
+		color: 'black'
+	});
+
+	var btServerRow = Ti.UI.createTableViewRow({
+		height: 50,
+		title: 'Server',
+		color: 'black',
+		hasChild: true
+	});
+
+	btServerRow.addEventListener('click', function () {
+		if (!bluetooth.isSupported()) {
+			alert('Bluetooth is not supported');
+			return;
+		}
+		if (!bluetooth.isRequiredPermissionsGranted()) {
+			alert('Required permissions not granted.');
+			return;
+		}
+		if (!bluetooth.isEnabled()) {
+			alert('Bluetooth not enabled.');
+			return;
+		}
+		var serverSocket = bluetooth.createServerSocket({
+			name: 'Test_Server_Socket',
+			uuid: '8ce255c0-200a-11e0-ac64-0800200c9a66',
+			secure: true
+		});
+
+		var Server = require('serversocket.js');
+		var serverPage = new Server(serverSocket);
+		serverPage.open();
+
+	});
+
 	btEnabledRow.add(btEnabledlabel);
 	btEnabledRow.add(btEnabledbutton);
 	btCheckPermissions.add(btPermissionlabel);
@@ -182,8 +221,10 @@ if (isAndroid) {
 	btRequiredSettingsSection.add(btCheckPermissions);
 	btRequiredSettingsSection.add(btRequestLocationPermission);
 	btDevicesSection.add(btDevicesRow);
+	btServerSection.add(btServerRow);
 	tbl_data.push(btRequiredSettingsSection);
 	tbl_data.push(btDevicesSection);
+	tbl_data.push(btServerSection);
 	table.setData(tbl_data);
 
 	win.add(table);
