@@ -103,6 +103,21 @@ function Server(btServerSocket) {
 		stateLabel.color = 'green';
 		stateLabel.text = 'Connection received';
 		stopAcceptingConnBtn.hide();
+		var socket = e.socket;
+		var btDeviceProxy = socket.getRemoteDevice();
+
+		var dialog = Ti.UI.createAlertDialog({
+			buttonNames: [ 'Ok' ],
+			message: 'Bluetooth Socket Accepted.\nDevice Name = ' + btDeviceProxy.name + '\nDevice Address = ' + btDeviceProxy.address,
+			title: 'Connection Received'
+		});
+		dialog.addEventListener('click', function (b) {
+			var DataCommunication = require('data_communication.js');
+			new DataCommunication(socket).open();
+			win.close();
+		});
+		dialog.show();
+		return;
 	});
 
 	serverSocket.addEventListener('error', function (e) {

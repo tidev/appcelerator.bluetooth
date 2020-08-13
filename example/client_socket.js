@@ -30,6 +30,12 @@ function Socket(btdevice) {
 		top: 20
 	});
 
+	var exchangeDataBtn = Titanium.UI.createButton({
+		title: 'Exchange Data',
+		visible: false,
+		top: 20
+	});
+
 	var stateLabel = Titanium.UI.createLabel({
 		text: 'State:',
 		color: 'black',
@@ -54,6 +60,7 @@ function Socket(btdevice) {
 	view.add(cancelbtn);
 	view.add(closebtn);
 	view.add(stateLabel);
+	view.add(exchangeDataBtn);
 
 	win.add(view);
 
@@ -98,11 +105,13 @@ function Socket(btdevice) {
 		stateLabel.color = 'green';
 		stateLabel.text = 'socket is connected';
 		cancelbtn.hide();
+		exchangeDataBtn.show();
 	});
 	clientSocket.addEventListener('disconnected', function (e) {
 		Ti.API.info(e.message);
 		stateLabel.color = 'red';
 		stateLabel.text = 'Socket is Disconnected';
+		exchangeDataBtn.hide();
 		cancelbtn.hide();
 	});
 
@@ -110,6 +119,7 @@ function Socket(btdevice) {
 		alert(e.errorMessage);
 		stateLabel.color = 'red';
 		stateLabel.text = 'Error';
+		exchangeDataBtn.hide();
 		cancelbtn.hide();
 	});
 
@@ -132,6 +142,11 @@ function Socket(btdevice) {
 			closeBtnToast.show();
 		}
 
+	});
+
+	exchangeDataBtn.addEventListener('click', function () {
+		var DataCommunication = require('data_communication.js');
+		new DataCommunication(clientSocket).open();
 	});
 
 	win.addEventListener('close', function () {
