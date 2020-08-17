@@ -1,0 +1,5 @@
+node_modules
+
+android/bin/
+android/build/
+android/dist/

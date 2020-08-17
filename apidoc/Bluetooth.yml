@@ -1,0 +1,4 @@
+---
+name: Modules.Bluetooth
+summary: Add-on Bluetooth module
+description: The module is used for connecting your application via bluetooth.
