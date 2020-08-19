@@ -70,8 +70,9 @@ public class BluetoothServerSocketProxy extends KrollProxy
 			do {
 				try {
 					BluetoothSocket socket = serverSocket.accept();
+					BluetoothSocketProxy btSocketProxy = new BluetoothSocketProxy(socket, null, false, null);
 					KrollDict dict = new KrollDict();
-					dict.put(eventConnectionReceivedKey, new BluetoothSocketProxy(socket, null, false, null));
+					dict.put(eventConnectionReceivedKey, btSocketProxy);
 					fireEvent("connectionReceived", dict);
 				} catch (IOException e) {
 					Log.e(TAG, "startAccept: exception", e);
