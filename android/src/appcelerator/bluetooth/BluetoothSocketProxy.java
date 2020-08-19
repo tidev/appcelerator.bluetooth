@@ -30,9 +30,9 @@ public class BluetoothSocketProxy extends KrollProxy
 								BluetoothDevice bluetoothDevice)
 	{
 		super();
-		btSocket = bluetoothSocket;
+		this.btSocket = bluetoothSocket;
 		this.uuid = uuid;
-		isSecure = secure;
+		this.isSecure = secure;
 		this.bluetoothDevice = bluetoothDevice;
 	}
 
@@ -56,6 +56,7 @@ public class BluetoothSocketProxy extends KrollProxy
 				dict.put("socket", this);
 				dict.put("errorMessage", connectException.getMessage());
 				fireEvent("error", dict);
+				Log.e(LCAT, "Cannot connect, Exception: " + connectException.getMessage());
 			}
 		});
 		connectThread.start();
@@ -79,31 +80,32 @@ public class BluetoothSocketProxy extends KrollProxy
 	@Kroll.method
 	public void cancelConnect()
 	{
-		if (isConnecting()) {
-			try {
-				btSocket.close();
-				state = socketState.disconnected;
-			} catch (IOException e) {
-				Log.e(LCAT, "trying to cancel" + e.getMessage());
-			}
-			try {
-				if (isSecure) {
-					btSocket = bluetoothDevice.createRfcommSocketToServiceRecord(UUID.fromString(uuid));
-					state = socketState.open;
-				} else {
-					btSocket = bluetoothDevice.createInsecureRfcommSocketToServiceRecord(UUID.fromString(uuid));
-					state = socketState.open;
-				}
-
-			} catch (IOException e) {
-				KrollDict dict = new KrollDict();
-				state = socketState.error;
-				dict.put("socket", this);
-				dict.put("errorMessage", "cannot create socket, Exception: " + e.getMessage());
-				fireEvent("error", dict);
-			}
-		} else {
+		if (!isConnecting()) {
 			Log.e(LCAT, "cannot cancel connection, Socket: " + state);
+			return;
+		}
+		try {
+			btSocket.close();
+			state = socketState.disconnected;
+		} catch (IOException e) {
+			Log.e(LCAT, "trying to cancel" + e.getMessage());
+		}
+		try {
+			if (isSecure) {
+				btSocket = bluetoothDevice.createRfcommSocketToServiceRecord(UUID.fromString(uuid));
+				state = socketState.open;
+			} else {
+				btSocket = bluetoothDevice.createInsecureRfcommSocketToServiceRecord(UUID.fromString(uuid));
+				state = socketState.open;
+			}
+
+		} catch (IOException e) {
+			KrollDict dict = new KrollDict();
+			state = socketState.error;
+			dict.put("socket", this);
+			dict.put("errorMessage", "cannot create socket, Exception: " + e.getMessage());
+			fireEvent("error", dict);
+			Log.e(LCAT, "Cannot create, Exception" + e.getMessage());
 		}
 	}
 
@@ -121,7 +123,7 @@ public class BluetoothSocketProxy extends KrollProxy
 			dict.put("socket", this);
 			dict.put("errorMessage", " trying to close socket but exception: " + e.getMessage());
 			fireEvent("error", dict);
-			Log.e(LCAT, e.getMessage());
+			Log.e(LCAT, "Cannot close, Exception: " + e.getMessage());
 		}
 	}
 

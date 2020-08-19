@@ -82,13 +82,11 @@ public class BluetoothDeviceProxy extends KrollProxy
 		try {
 			if (secure) {
 				bluetoothSocket = btDevice.createRfcommSocketToServiceRecord(UUID.fromString(uuid));
-				bluetoothSocketProxy = new BluetoothSocketProxy(bluetoothSocket, uuid, secure, btDevice);
-				return bluetoothSocketProxy;
 			} else {
 				bluetoothSocket = btDevice.createInsecureRfcommSocketToServiceRecord(UUID.fromString(uuid));
-				bluetoothSocketProxy = new BluetoothSocketProxy(bluetoothSocket, uuid, secure, btDevice);
-				return bluetoothSocketProxy;
 			}
+			bluetoothSocketProxy = new BluetoothSocketProxy(bluetoothSocket, uuid, secure, btDevice);
+			return bluetoothSocketProxy;
 
 		} catch (IOException e) {
 			Log.e(TAG, "bluetooth socket creation failed", e);
