@@ -7,17 +7,22 @@ package appcelerator.bluetooth;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
 import android.content.IntentFilter;
 import android.os.ParcelUuid;
+import android.util.Log;
 import appcelerator.bluetooth.Receivers.UUIDBroadcastReceiver;
+import java.io.IOException;
+import java.util.UUID;
 import org.appcelerator.kroll.KrollProxy;
 import org.appcelerator.kroll.annotations.Kroll;
 
-@Kroll.proxy()
+@Kroll.proxy
 public class BluetoothDeviceProxy extends KrollProxy
 {
 
 	private BluetoothDevice btDevice;
+	private static final String TAG = "BluetoothDeviceProxy";
 	private UUIDBroadcastReceiver uuidReceiver = new UUIDBroadcastReceiver(this);
 
 	public BluetoothDeviceProxy(BluetoothDevice bluetoothDevice)
@@ -67,6 +72,26 @@ public class BluetoothDeviceProxy extends KrollProxy
 		intentFilter.addAction(BluetoothDevice.ACTION_UUID);
 		getActivity().registerReceiver(uuidReceiver, intentFilter);
 		return btDevice.fetchUuidsWithSdp();
+	}
+
+	@Kroll.method
+	public BluetoothSocketProxy createSocket(String uuid, @Kroll.argument(optional = true) boolean secure)
+	{
+		BluetoothSocket bluetoothSocket;
+		BluetoothSocketProxy bluetoothSocketProxy;
+		try {
+			if (secure) {
+				bluetoothSocket = btDevice.createRfcommSocketToServiceRecord(UUID.fromString(uuid));
+			} else {
+				bluetoothSocket = btDevice.createInsecureRfcommSocketToServiceRecord(UUID.fromString(uuid));
+			}
+			bluetoothSocketProxy = new BluetoothSocketProxy(bluetoothSocket, uuid, secure, btDevice);
+			return bluetoothSocketProxy;
+
+		} catch (IOException e) {
+			Log.e(TAG, "bluetooth socket creation failed", e);
+		}
+		return null;
 	}
 
 	@Override
