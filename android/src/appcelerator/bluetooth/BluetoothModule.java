@@ -266,6 +266,21 @@ public class BluetoothModule extends KrollModule
 		}
 	}
 
+	@Kroll.method
+	public BluetoothServerSocketProxy createServerSocket(KrollDict dict)
+	{
+		if (!isSupported()) {
+			Log.e(LCAT, "createServerSocket: bluetooth not supported on this device.");
+			return null;
+		}
+
+		String name = dict.getString("name");
+		String uuid = dict.getString("uuid");
+		boolean isSecure = dict.optBoolean("secure", false);
+
+		return new BluetoothServerSocketProxy(name, uuid, isSecure);
+	}
+
 	@Override
 	public void onDestroy(Activity activity)
 	{
