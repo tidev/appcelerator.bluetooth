@@ -1,0 +1,73 @@
+---
+name: Modules.Bluetooth.BluetoothServerSocket
+summary: A listening Bluetooth socket.
+description: |
+    The purpose of the `BluetoothSocketServer` object is to listen for incoming connection requests
+    and provide a connected `BluetoothSocket` after a request is accepted.
+extends: Titanium.Proxy
+createable: false
+since: "1.0.0" 
+platforms: [android]
+methods: 
+  - name: close
+    summary: Closes the server socket.
+    description: |
+        This method, when called, closes the server socket. One cannot start accepting connections
+        again after calling this method. On error, this method will throw an exception.
+    since: "1.0.0"
+    platforms: [android]
+  
+  - name: isAccepting
+    summary: Determines whether the server socket is currently accepting connections.
+    since: "1.0.0"
+    platforms: [android]
+    returns:
+      type: "Boolean"
+      summary: True if the server socket is accepting connections, false otherwise.
+
+  - name: startAccept
+    summary: Inform the server socket to start accepting incoming connections.
+    description: |
+        This method, when called, starts listening for the incoming Bluetooth connections and block
+        until a connection is established. Listen for the 
+        [connectionReceived](Modules.Bluetooth.BluetoothServerSocket.connectionReceived) event to be
+        notified when a connection is received or the [error](Modules.Bluetooth.BluetoothServerSocket.error)
+        event when an error occured during accepting connection.
+    since: "1.0.0"
+    platforms: [android]
+    parameters:
+      - name: keepListening
+        summary: Defines whether the server socket should keep listening after an incoming connection
+            was received. If this parameter is false, it will stop accepting connections after a 
+            single connection is recieved.
+        type: Boolean
+        optional: true
+        default: false
+
+  - name: stopAccept
+    summary: Inform the server socket to stop accepting incoming connections.
+    description: |
+        This method, when called stop accepting incoming connections. One can again start accepting
+        connections via [startAccept](Modules.Bluetooth.BluetoothServerSocket.startAccept) method
+        after calling this method. On error, this method will throw an exception.
+    since: "1.0.0"
+    platforms: [android]
+
+events:
+  - name: connectionReceived
+    summary: Fired when the server socket receives an incoming connection.
+    since: "1.0.0"
+    platforms: [android]
+    properties:
+      - name: socket
+        summary: The socket object bind to the connection.
+        type: Modules.Bluetooth.BluetoothSocket
+
+  - name: error
+    summary: Fired when a socket operation fails.
+    since: "1.0.0"
+    platforms: [android]
+    properties:
+      - name: errorMessage
+        summary: Description of the error.
+        type: String
