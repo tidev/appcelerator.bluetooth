@@ -1,14 +1,7 @@
 function deviceWin() {
 	var win = Titanium.UI.createWindow({
 		backgroundColor: '#FFFFFF',
-		title: 'Bluetooth Devices',
-		onBack: function () {
-			tbl_data = [];
-			if (bluetooth.isDiscovering()) {
-				bluetooth.cancelDiscovery();
-			}
-			win.close();
-		}
+		title: 'Bluetooth Devices'
 	});
 
 	var table = new Titanium.UI.createTableView({
@@ -123,33 +116,32 @@ function deviceWin() {
 	});
 
 	deviceDiscoverableSwitch.addEventListener('change', function () {
-		if (deviceDiscoverableSwitch.value === true) {
-			var numRows = btDevicesListSection.rowCount;
-			if (!bluetooth.isRequiredPermissionsGranted()) {
-				alert('Required Permission are not granted'); // eslint-disable-line no-alert
-				deviceDiscoverableSwitch.value = false;
-				return;
-			}
-			if (numRows === 0) {
-				bluetooth.startDiscovery();
-				return;
-			} else {
-				var rowarray = btDevicesListSection.rows;
-				for (var i = 0; i < numRows; i++) {
-					table.deleteRow(rowarray[i]);
-				}
-				bluetooth.startDiscovery();
-				return;
-			}
-
-		} else if (deviceDiscoverableSwitch.value === false) {
+		if (!deviceDiscoverableSwitch.value) {
 			if (bluetooth.isDiscovering()) {
 				bluetooth.cancelDiscovery();
 			}
+			return;
+		}
+		var numRows = btDevicesListSection.rowCount;
+		if (!bluetooth.isRequiredPermissionsGranted()) {
+			alert('Required Permission are not granted'); // eslint-disable-line no-alert
+			deviceDiscoverableSwitch.value = false;
+			return;
+		}
+		if (numRows === 0) {
+			bluetooth.startDiscovery();
+			return;
+		} else {
+			var rowarray = btDevicesListSection.rows;
+			for (var i = 0; i < numRows; i++) {
+				table.deleteRow(rowarray[i]);
+			}
+			bluetooth.startDiscovery();
+			return;
 		}
 	});
 
-	bluetooth.addEventListener('discoveryStarted', function () {
+	var discoveryStartedListener = () => {
 		Ti.API.info('Discovery Started');
 		activityIndicator.show();
 		var discoveryStartedToast = Ti.UI.createNotification({
@@ -157,9 +149,11 @@ function deviceWin() {
 			duration: Ti.UI.NOTIFICATION_DURATION_SHORT
 		});
 		discoveryStartedToast.show();
-	});
+	};
 
-	bluetooth.addEventListener('discoveryFinished', function () {
+	bluetooth.addEventListener('discoveryStarted', discoveryStartedListener);
+
+	var discoveryFinishedListener = () => {
 		Ti.API.info('Discovery Finished');
 		activityIndicator.hide();
 		deviceDiscoverableSwitch.value = false;
@@ -169,12 +163,13 @@ function deviceWin() {
 			duration: Ti.UI.NOTIFICATION_DURATION_SHORT
 		});
 		discoveryFinishedToast.show();
+	};
 
-	});
+	bluetooth.addEventListener('discoveryFinished', discoveryFinishedListener);
 
 	var btDevicesListSection = Ti.UI.createTableViewSection();
 
-	bluetooth.addEventListener('deviceFound', function (e) {
+	var deviceFoundListener = (e) => {
 		Ti.API.info('Device Found');
 		var device = e.device;
 		deviceFoundRow = Ti.UI.createTableViewRow({
@@ -185,8 +180,9 @@ function deviceWin() {
 		});
 		Ti.API.info(device.name + '\n' + device.address);
 		table.appendRow(deviceFoundRow);
+	};
 
-	});
+	bluetooth.addEventListener('deviceFound', deviceFoundListener);
 
 	btDevicesListSection.addEventListener('click', function (e) {
 		var indexRow = e.source;
@@ -194,6 +190,16 @@ function deviceWin() {
 			var clientSocketPage = new clientSocket(bluetooth.getRemoteDevice(indexRow.id));
 			clientSocketPage.open();
 		}
+	});
+
+	win.addEventListener('close', function () {
+		tbl_data = [];
+		if (bluetooth.isDiscovering()) {
+			bluetooth.cancelDiscovery();
+		}
+		bluetooth.removeEventListener('discoveryStarted', discoveryStartedListener);
+		bluetooth.removeEventListener('discoveryFinished', discoveryFinishedListener);
+		bluetooth.removeEventListener('deviceFound', deviceFoundListener);
 	});
 
 	btDeviceDiscoverableRow.add(btDeviceDiscoverablelabel);

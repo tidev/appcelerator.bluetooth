@@ -64,7 +64,7 @@ function Socket(btdevice) {
 
 	win.add(view);
 
-	var clientSocket = device.createSocket('8ce255c0-200a-11e0-ac64-0800200c9a66');
+	var clientSocket = device.createSocket(UUID);
 
 	if (bluetooth.isDiscovering()) {
 		bluetooth.cancelDiscovery();
