@@ -53,6 +53,7 @@ public class BluetoothModule extends KrollModule
 	@Kroll.constant
 	public static final int STATE_TURNING_ON = BluetoothAdapter.STATE_TURNING_ON;
 
+	private final int DEVICE_DISCOVERABLE_DEFAULT_INTERVAL = 300; // in seconds.
 	private final String bt_unsupported = "Bluetooth is not supported";
 	private final BluetoothAdapter btAdapter;
 	private StateBroadcastReceiver stateReceiver;
@@ -257,11 +258,16 @@ public class BluetoothModule extends KrollModule
 	}
 
 	@Kroll.method
-	public void ensureDiscoverable()
+	public void ensureDiscoverable(@Kroll.argument(optional = true) Integer interval)
 	{
 		if (btAdapter.getScanMode() != SCAN_MODE_CONNECTABLE_DISCOVERABLE) {
+			if (interval == null) {
+				// use default interval, if interval value not provided.
+				interval = DEVICE_DISCOVERABLE_DEFAULT_INTERVAL;
+			}
+
 			Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-			discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
+			discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, interval);
 			getActivity().startActivity(discoverableIntent);
 		}
 	}
