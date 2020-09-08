@@ -84,6 +84,13 @@ public class BluetoothServerSocketProxy extends KrollProxy
 				}
 			} while (keepListening && state == ServerSocketState.Accepting);
 
+			try {
+				// close serverSocket, this object no longer needed.
+				serverSocket.close();
+			} catch (IOException e) {
+				Log.e(TAG, "startAccept: exception on socket close. Exception Details = ", e);
+			}
+
 			if (state != ServerSocketState.Closed) {
 				setState(ServerSocketState.Open);
 			}
