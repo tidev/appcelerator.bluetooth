@@ -109,7 +109,12 @@ events:
         type: Modules.Bluetooth.BluetoothSocket
 
       - name: errorMessage
-        summary: Description of the error.
+        summary: The error message for the error encountered on the [socket](Modules.Bluetooth.BluetoothSocket.error.socket).
+          The error can be encountered while performing any socket operations like- socket connecting to remote device,
+          cancelling the connecting operation, closing the socket, socket connection gets lost etc.
+          Note:- If the error message "Device connection was lost." comes, that signifies the connection with
+          the socket is lost which can occur if the device goes out of bluetooth range, remote device
+          deliberately disconnects the connection, etc.
         type: String
 
   - name: receivedData

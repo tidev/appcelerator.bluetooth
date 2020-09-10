@@ -201,7 +201,7 @@ public class BluetoothSocketProxy extends KrollProxy implements BluetoothSocketC
 		state = socketState.error;
 		KrollDict dict = new KrollDict();
 		dict.put("socket", this);
-		dict.put("errorMessage", e.getMessage());
+		dict.put("errorMessage", "Device connection was lost.");
 		fireEvent("error", dict);
 	}
 
