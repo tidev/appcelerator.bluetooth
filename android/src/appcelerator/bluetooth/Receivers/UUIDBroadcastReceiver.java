@@ -12,16 +12,14 @@ import android.content.Intent;
 import android.os.Parcelable;
 import appcelerator.bluetooth.BluetoothDeviceProxy;
 import java.util.HashMap;
-import org.appcelerator.kroll.KrollModule;
-import org.appcelerator.kroll.KrollProxy;
 
 public class UUIDBroadcastReceiver extends BroadcastReceiver
 {
-	private KrollProxy krollProxy;
+	private BluetoothDeviceProxy btDeviceProxy;
 
-	public UUIDBroadcastReceiver(KrollProxy krollProxy)
+	public UUIDBroadcastReceiver(BluetoothDeviceProxy btDeviceProxy)
 	{
-		this.krollProxy = krollProxy;
+		this.btDeviceProxy = btDeviceProxy;
 	}
 
 	@Override
@@ -40,11 +38,12 @@ public class UUIDBroadcastReceiver extends BroadcastReceiver
 					uuidStrings[i] = parcelUuid.toString();
 					i++;
 				}
-
 				BluetoothDeviceProxy bluetoothDeviceProxy = new BluetoothDeviceProxy(device);
 				dict.put("device", bluetoothDeviceProxy);
 				dict.put("UUIDs", uuidStrings);
-				krollProxy.fireEvent("fetchedUUIDs", dict);
+				btDeviceProxy.fireEvent("fetchedUUIDs", dict);
+				btDeviceProxy.getActivity().unregisterReceiver(this);
+				btDeviceProxy.setFetchuuidState(false);
 			}
 		}
 	}
