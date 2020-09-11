@@ -53,7 +53,7 @@ public class BluetoothSocketProxy extends KrollProxy implements BluetoothSocketC
 	{
 		KrollDict dict = new KrollDict();
 		if (state != socketState.open) {
-			Log.e(LCAT, "Cannot connect socket, Socket: " + state);
+			Log.d(LCAT, "Cannot connect socket, Socket: " + state);
 			return;
 		}
 		state = socketState.connecting;
@@ -98,7 +98,7 @@ public class BluetoothSocketProxy extends KrollProxy implements BluetoothSocketC
 	public void cancelConnect()
 	{
 		if (!isConnecting()) {
-			Log.e(LCAT, "cannot cancel connection, Socket: " + state);
+			Log.d(LCAT, "cannot cancel connection, Socket: " + state);
 			return;
 		}
 		closeSocketQuietly(btSocket);

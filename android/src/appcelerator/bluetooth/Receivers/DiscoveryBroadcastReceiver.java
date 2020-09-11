@@ -32,17 +32,18 @@ public class DiscoveryBroadcastReceiver extends BroadcastReceiver
 
 		if (BluetoothDevice.ACTION_FOUND.equals(action)) {
 			BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-			int RSSI = intent.getShortExtra(BluetoothDevice.EXTRA_RSSI, Short.MIN_VALUE);
-			BluetoothDeviceProxy bluetoothDeviceProxy = new BluetoothDeviceProxy(device);
-			dict.put("device", bluetoothDeviceProxy);
-			dict.put("RSSI", RSSI);
-			krollModule.fireEvent("deviceFound", dict);
-		}
-		if (BluetoothAdapter.ACTION_DISCOVERY_STARTED.equals(action)) {
+			if (device != null) {
+				int RSSI = intent.getShortExtra(BluetoothDevice.EXTRA_RSSI, Short.MIN_VALUE);
+				BluetoothDeviceProxy bluetoothDeviceProxy = new BluetoothDeviceProxy(device);
+				dict.put("device", bluetoothDeviceProxy);
+				dict.put("RSSI", RSSI);
+				krollModule.fireEvent("deviceFound", dict);
+			}
+		} else if (BluetoothAdapter.ACTION_DISCOVERY_STARTED.equals(action)) {
 			krollModule.fireEvent("discoveryStarted", "discovery is started");
-		}
-		if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
+		} else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
 			krollModule.fireEvent("discoveryFinished", "discovery is finished");
+			krollModule.getActivity().unregisterReceiver(this);
 		}
 	}
 }

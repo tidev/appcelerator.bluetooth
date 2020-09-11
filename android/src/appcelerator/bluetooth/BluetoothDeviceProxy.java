@@ -5,7 +5,6 @@
  */
 package appcelerator.bluetooth;
 
-import android.app.Activity;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.IntentFilter;
@@ -24,6 +23,7 @@ public class BluetoothDeviceProxy extends KrollProxy
 	private BluetoothDevice btDevice;
 	private static final String TAG = "BluetoothDeviceProxy";
 	private UUIDBroadcastReceiver uuidReceiver = new UUIDBroadcastReceiver(this);
+	private boolean isFetchingUuid;
 
 	public BluetoothDeviceProxy(BluetoothDevice bluetoothDevice)
 	{
@@ -68,10 +68,25 @@ public class BluetoothDeviceProxy extends KrollProxy
 	@Kroll.method
 	public boolean fetchUUIDs()
 	{
+
+		if (isFetchingUuid) {
+			Log.w(TAG, "fetchUUIDs(): Service discovery to get UUIDs is already ongoing, cannot start again.");
+			return false;
+		}
+		if (!btDevice.fetchUuidsWithSdp()) {
+			Log.e(TAG, "fetchUUIDs(): Fail to initiate fetch UUIds due to sanity check failure");
+			return false;
+		}
+		setFetchuuidState(true);
 		IntentFilter intentFilter = new IntentFilter();
 		intentFilter.addAction(BluetoothDevice.ACTION_UUID);
 		getActivity().registerReceiver(uuidReceiver, intentFilter);
-		return btDevice.fetchUuidsWithSdp();
+		return true;
+	}
+
+	public void setFetchuuidState(boolean state)
+	{
+		isFetchingUuid = state;
 	}
 
 	@Kroll.method
@@ -92,12 +107,5 @@ public class BluetoothDeviceProxy extends KrollProxy
 			Log.e(TAG, "bluetooth socket creation failed", e);
 		}
 		return null;
-	}
-
-	@Override
-	public void onDestroy(Activity activity)
-	{
-		getActivity().unregisterReceiver(uuidReceiver);
-		super.onDestroy(activity);
 	}
 }

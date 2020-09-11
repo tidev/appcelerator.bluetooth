@@ -58,13 +58,12 @@ public class BluetoothModule extends KrollModule
 	private final BluetoothAdapter btAdapter;
 	private StateBroadcastReceiver stateReceiver;
 	private DiscoveryBroadcastReceiver discoveryReceiver;
-	private IntentFilter intentFilter;
 
 	public BluetoothModule()
 	{
 		super();
 		btAdapter = BluetoothAdapter.getDefaultAdapter();
-		intentFilter = new IntentFilter();
+		IntentFilter intentFilter = new IntentFilter();
 		intentFilter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
 		stateReceiver = new StateBroadcastReceiver(this);
 		discoveryReceiver = new DiscoveryBroadcastReceiver(this);
@@ -208,11 +207,16 @@ public class BluetoothModule extends KrollModule
 			Log.e(LCAT, "Required permission not granted");
 			return false;
 		}
-		intentFilter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
-		intentFilter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
-		intentFilter.addAction(BluetoothDevice.ACTION_FOUND);
-		getActivity().registerReceiver(discoveryReceiver, intentFilter);
-		return btAdapter.startDiscovery();
+		if (btAdapter.startDiscovery()) {
+			IntentFilter intentFilter = new IntentFilter();
+			intentFilter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
+			intentFilter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
+			intentFilter.addAction(BluetoothDevice.ACTION_FOUND);
+			getActivity().registerReceiver(discoveryReceiver, intentFilter);
+			return true;
+		}
+		Log.e(LCAT, "startDiscovery(): Could not start discovery due to the error. ");
+		return false;
 	}
 
 	@Kroll.method
@@ -231,7 +235,6 @@ public class BluetoothModule extends KrollModule
 		if (isDiscovering()) {
 			return btAdapter.cancelDiscovery();
 		}
-		getActivity().unregisterReceiver(discoveryReceiver);
 		return false;
 	}
 
