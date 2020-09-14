@@ -75,13 +75,14 @@ public class BluetoothServerSocketProxy extends KrollProxy
 					dict.put(eventConnectionReceivedKey, btSocketProxy);
 					fireEvent("connectionReceived", dict);
 				} catch (IOException e) {
-					Log.e(TAG, "startAccept: exception", e);
 					if (state != ServerSocketState.Stopping && state != ServerSocketState.Closed) {
+						Log.e(TAG, "startAccept: exception", e);
 						KrollDict dict = new KrollDict();
 						dict.put(eventErrorKey,
 								 "Exception while accepting socket connection. Exception Details = " + e.getMessage());
 						fireEvent("error", dict);
 					}
+					break;
 				}
 			} while (keepListening && state == ServerSocketState.Accepting);
 
