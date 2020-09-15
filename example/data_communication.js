@@ -18,19 +18,23 @@ function DataComm(btSocket) {
 		height: Ti.UI.SIZE,
 		backgroundColor: 'grey'
 	});
-	var field = Ti.UI.createTextField({
+
+	var field = Ti.UI.createTextArea({
 		left: 5,
 		right: 5,
 		color: 'white',
 		backgroundColor: 'transparent',
+		height: Ti.UI.SIZE,
 		hintText: 'Type here',
-		width: '50%'
+		width: '70%'
 	});
 	var btnSend = Ti.UI.createButton({
-		title: 'Send'
+		title: 'Send',
+		left: 8
 	});
 	var btnClose = Ti.UI.createButton({
-		title: 'Close'
+		title: 'Close',
+		left: 5
 	});
 	bottomHView.add(field);
 	bottomHView.add(btnSend);
@@ -79,8 +83,8 @@ function DataComm(btSocket) {
 
 		var chatRow = Ti.UI.createTableViewRow();
 		var chatLabel = Ti.UI.createLabel({
-			color: 'blue',
-			text: labelText,
+			color: 'black',
+			text: 'Me: ' + labelText,
 			right: 5
 		});
 		chatRow.add(chatLabel);
@@ -103,8 +107,8 @@ function DataComm(btSocket) {
 		var labelText = Ti.Codec.decodeString({ source: e.data });
 		var chatRow = Ti.UI.createTableViewRow();
 		var chatLabel = Ti.UI.createLabel({
-			color: 'blue',
-			text: labelText,
+			color: 'black',
+			text: btSocket.getRemoteDevice().name + ': ' + labelText,
 			left: 5
 		});
 		chatRow.add(chatLabel);
