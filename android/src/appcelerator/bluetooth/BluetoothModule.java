@@ -54,7 +54,11 @@ public class BluetoothModule extends KrollModule
 	public static final int STATE_TURNING_ON = BluetoothAdapter.STATE_TURNING_ON;
 
 	private final int DEVICE_DISCOVERABLE_DEFAULT_INTERVAL = 300; // in seconds.
-	private final String bt_unsupported = "Bluetooth is not supported";
+	private final String BT_UNSUPPORTED = "Bluetooth is not supported";
+	private final String BT_DISABLED = "Bluetooth is disabled";
+	private final String PAIRED_DEVICES_SUCCESS_KEY = "success";
+	private final String PAIRED_DEVICES_MESSAGE_KEY = "message";
+	private final String PAIRED_DEVICES_KEY = "pairedDevices";
 	private final BluetoothAdapter btAdapter;
 	private StateBroadcastReceiver stateReceiver;
 	private DiscoveryBroadcastReceiver discoveryReceiver;
@@ -86,7 +90,7 @@ public class BluetoothModule extends KrollModule
 	public boolean isEnabled()
 	{
 		if (!isSupported()) {
-			Log.e(LCAT, bt_unsupported);
+			Log.e(LCAT, BT_UNSUPPORTED);
 			return false;
 		}
 		return btAdapter.isEnabled();
@@ -124,7 +128,7 @@ public class BluetoothModule extends KrollModule
 	public String getAddress()
 	{
 		if (!isSupported()) {
-			Log.e(LCAT, bt_unsupported);
+			Log.e(LCAT, BT_UNSUPPORTED);
 			return null;
 		}
 		return btAdapter.getAddress();
@@ -135,7 +139,7 @@ public class BluetoothModule extends KrollModule
 	public String getName()
 	{
 		if (!isSupported()) {
-			Log.e(LCAT, bt_unsupported);
+			Log.e(LCAT, BT_UNSUPPORTED);
 			return null;
 		}
 		return btAdapter.getName();
@@ -145,7 +149,7 @@ public class BluetoothModule extends KrollModule
 	public boolean setName(String name)
 	{
 		if (!isEnabled()) {
-			Log.e(LCAT, "Bluetooth is disabled");
+			Log.e(LCAT, BT_DISABLED);
 			return false;
 		}
 		return btAdapter.setName(name);
@@ -158,7 +162,7 @@ public class BluetoothModule extends KrollModule
 			BluetoothDevice bluetoothDevice = btAdapter.getRemoteDevice(address);
 			return new BluetoothDeviceProxy(bluetoothDevice);
 		}
-		Log.e(LCAT, bt_unsupported);
+		Log.e(LCAT, BT_UNSUPPORTED);
 		return null;
 	}
 
@@ -173,8 +177,8 @@ public class BluetoothModule extends KrollModule
 	{
 		KrollDict devices = new KrollDict();
 		if (!isEnabled()) {
-			devices.put("success", false);
-			devices.put("message", "Bluetooth is disabled");
+			devices.put(PAIRED_DEVICES_SUCCESS_KEY, false);
+			devices.put(PAIRED_DEVICES_MESSAGE_KEY, BT_DISABLED);
 			return devices;
 		}
 		Set<BluetoothDevice> pairedDevices = btAdapter.getBondedDevices();
@@ -187,12 +191,12 @@ public class BluetoothModule extends KrollModule
 				i++;
 			}
 
-			devices.put("pairedDevices", bluetoothDeviceProxySet);
-			devices.put("success", true);
+			devices.put(PAIRED_DEVICES_KEY, bluetoothDeviceProxySet);
+			devices.put(PAIRED_DEVICES_SUCCESS_KEY, true);
 			return devices;
 		}
-		devices.put("success", false);
-		devices.put("message", "No Device Found");
+		devices.put(PAIRED_DEVICES_SUCCESS_KEY, false);
+		devices.put(PAIRED_DEVICES_MESSAGE_KEY, "No Device Found");
 		return devices;
 	}
 
@@ -200,7 +204,7 @@ public class BluetoothModule extends KrollModule
 	public boolean startDiscovery()
 	{
 		if (!isEnabled()) {
-			Log.e(LCAT, "Bluetooth is disabled");
+			Log.e(LCAT, BT_DISABLED);
 			return false;
 		}
 		if (!isRequiredPermissionsGranted()) {
@@ -223,7 +227,7 @@ public class BluetoothModule extends KrollModule
 	public boolean isDiscovering()
 	{
 		if (!isSupported()) {
-			Log.e(LCAT, bt_unsupported);
+			Log.e(LCAT, BT_UNSUPPORTED);
 			return false;
 		}
 		return btAdapter.isDiscovering();
@@ -243,7 +247,7 @@ public class BluetoothModule extends KrollModule
 	public int getScanMode()
 	{
 		if (!isSupported()) {
-			Log.e(LCAT, bt_unsupported);
+			Log.e(LCAT, BT_UNSUPPORTED);
 			return BluetoothAdapter.ERROR;
 		}
 		return btAdapter.getScanMode();
@@ -254,7 +258,7 @@ public class BluetoothModule extends KrollModule
 	public int getState()
 	{
 		if (!isSupported()) {
-			Log.e(LCAT, bt_unsupported);
+			Log.e(LCAT, BT_UNSUPPORTED);
 			return BluetoothAdapter.ERROR;
 		}
 		return btAdapter.getState();

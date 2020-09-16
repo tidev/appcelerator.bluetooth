@@ -50,6 +50,14 @@ methods:
     since: "1.0.0"
     platforms: [android]
 
+  - name: getReadBufferSize
+    summary: Get the size of the read buffer in bytes.
+    since: "1.0.0"
+    platforms: [android]
+    returns: 
+      type: Number 
+      summary: "Size of the read buffer in bytes."
+
   - name: getRemoteDevice
     summary: Get the remote device this socket is associated with.
     since: "1.0.0"
@@ -57,6 +65,18 @@ methods:
     returns: 
       type: Modules.Bluetooth.BluetoothDevice  
       summary: "The object representing the device to which this socket is connected to."
+
+  - name: setReadBufferSize
+    summary: Sets the size of the read buffer in bytes.
+    description: |
+        You can set the read buffer size at any time, but it will only take effect during the next connection.
+        By default, the buffer size is 4*1024 bytes.
+    since: "1.0.0"
+    platforms: [android]
+    parameters:
+      - name: newReadBufferSize
+        summary: The desired size of the read buffer in bytes.
+        type: Number
   
   - name: write
     summary: Sends an array of bytes over the socket.
@@ -71,7 +91,7 @@ methods:
 
 properties:
   - name: readBufferSize
-    summary: The size of the read buffer in bytes.
+    summary: The size of the read buffer in bytes. By default, the buffer size is 4*1024 bytes.
     type: Number
     since: "1.0.0"
     platforms: [android]
@@ -96,7 +116,8 @@ events:
         type: Modules.Bluetooth.BluetoothSocket
 
       - name: message
-        summary: The localized message of the exception that accompanies the disconnect event.
+        summary: The localized message of the exception that accompanies the disconnect event. The
+            localized message is `Socket is Disconnected`.
         type: String
 
   - name: error

@@ -17,6 +17,11 @@ import org.appcelerator.kroll.KrollModule;
 public class DiscoveryBroadcastReceiver extends BroadcastReceiver
 {
 	private KrollModule krollModule;
+	private final String EVENT_DEVICE_FOUND = "deviceFound";
+	private final String EVENT_DEVICE_FOUND_KEY = "device";
+	private final String EVENT_DEVICE_FOUND_RSSI_KEY = "RSSI";
+	private final String EVENT_DISCOVERY_STARTED = "discoveryStarted";
+	private final String EVENT_DISCOVERY_FINISHED = "discoveryFinished";
 
 	public DiscoveryBroadcastReceiver(KrollModule krollModule)
 	{
@@ -35,14 +40,14 @@ public class DiscoveryBroadcastReceiver extends BroadcastReceiver
 			if (device != null) {
 				int RSSI = intent.getShortExtra(BluetoothDevice.EXTRA_RSSI, Short.MIN_VALUE);
 				BluetoothDeviceProxy bluetoothDeviceProxy = new BluetoothDeviceProxy(device);
-				dict.put("device", bluetoothDeviceProxy);
-				dict.put("RSSI", RSSI);
-				krollModule.fireEvent("deviceFound", dict);
+				dict.put(EVENT_DEVICE_FOUND_KEY, bluetoothDeviceProxy);
+				dict.put(EVENT_DEVICE_FOUND_RSSI_KEY, RSSI);
+				krollModule.fireEvent(EVENT_DEVICE_FOUND, dict);
 			}
 		} else if (BluetoothAdapter.ACTION_DISCOVERY_STARTED.equals(action)) {
-			krollModule.fireEvent("discoveryStarted", "discovery is started");
+			krollModule.fireEvent(EVENT_DISCOVERY_STARTED, "discovery is started");
 		} else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
-			krollModule.fireEvent("discoveryFinished", "discovery is finished");
+			krollModule.fireEvent(EVENT_DISCOVERY_FINISHED, "discovery is finished");
 			krollModule.getActivity().unregisterReceiver(this);
 		}
 	}
