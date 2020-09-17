@@ -15,6 +15,8 @@ import org.appcelerator.kroll.KrollModule;
 public class StateBroadcastReceiver extends BroadcastReceiver
 {
 	private KrollModule krollModule;
+	private final String EVENT_STATE_CHANGED = "stateChanged";
+	private final String EVENT_STATE_CHANGED_KEY = "message";
 
 	public StateBroadcastReceiver(KrollModule krollModule)
 	{
@@ -30,20 +32,20 @@ public class StateBroadcastReceiver extends BroadcastReceiver
 			final int state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.ERROR);
 			switch (state) {
 				case BluetoothAdapter.STATE_OFF:
-					dict.put("message", "Bluetooth is off");
-					krollModule.fireEvent("stateChanged", dict);
+					dict.put(EVENT_STATE_CHANGED_KEY, "Bluetooth is off");
+					krollModule.fireEvent(EVENT_STATE_CHANGED, dict);
 					break;
 				case BluetoothAdapter.STATE_TURNING_OFF:
-					dict.put("message", "Bluetooth is turning off");
-					krollModule.fireEvent("stateChanged", dict);
+					dict.put(EVENT_STATE_CHANGED_KEY, "Bluetooth is turning off");
+					krollModule.fireEvent(EVENT_STATE_CHANGED, dict);
 					break;
 				case BluetoothAdapter.STATE_ON:
-					dict.put("message", "Bluetooth is on");
-					krollModule.fireEvent("stateChanged", dict);
+					dict.put(EVENT_STATE_CHANGED_KEY, "Bluetooth is on");
+					krollModule.fireEvent(EVENT_STATE_CHANGED, dict);
 					break;
 				case BluetoothAdapter.STATE_TURNING_ON:
-					dict.put("message", "Bluetooth is turning on");
-					krollModule.fireEvent("stateChanged", dict);
+					dict.put(EVENT_STATE_CHANGED_KEY, "Bluetooth is turning on");
+					krollModule.fireEvent(EVENT_STATE_CHANGED, dict);
 					break;
 			}
 		}

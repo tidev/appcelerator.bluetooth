@@ -28,8 +28,10 @@ public class BluetoothServerSocketProxy extends KrollProxy
 	private volatile ServerSocketState state = ServerSocketState.Open;
 	private volatile BluetoothServerSocket serverSocket;
 
-	private final String eventErrorKey = "errorMessage";
-	private final String eventConnectionReceivedKey = "socket";
+	private final String EVENT_ERROR = "error";
+	private final String EVENT_ERROR_KEY = "errorMessage";
+	private final String EVENT_CONNECTION_RECEIVED = "connectionReceived";
+	private final String EVENT_CONNECTION_RECEIVED_KEY = "socket";
 	private final String TAG = "BluetoothServerSocketProxy";
 
 	public BluetoothServerSocketProxy(String name, String uuid, boolean isSecure)
@@ -72,15 +74,15 @@ public class BluetoothServerSocketProxy extends KrollProxy
 					BluetoothSocket socket = serverSocket.accept();
 					BluetoothSocketProxy btSocketProxy = new BluetoothSocketProxy(socket, null, false, null);
 					KrollDict dict = new KrollDict();
-					dict.put(eventConnectionReceivedKey, btSocketProxy);
-					fireEvent("connectionReceived", dict);
+					dict.put(EVENT_CONNECTION_RECEIVED_KEY, btSocketProxy);
+					fireEvent(EVENT_CONNECTION_RECEIVED, dict);
 				} catch (IOException e) {
 					if (state != ServerSocketState.Stopping && state != ServerSocketState.Closed) {
 						Log.e(TAG, "startAccept: exception", e);
 						KrollDict dict = new KrollDict();
-						dict.put(eventErrorKey,
+						dict.put(EVENT_ERROR_KEY,
 								 "Exception while accepting socket connection. Exception Details = " + e.getMessage());
-						fireEvent("error", dict);
+						fireEvent(EVENT_ERROR, dict);
 					}
 					break;
 				}

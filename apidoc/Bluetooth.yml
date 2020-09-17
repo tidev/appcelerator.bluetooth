@@ -259,6 +259,14 @@ methods:
         optional: true
         default: 300
 
+  - name: getName
+    summary: Gets the friendly Bluetooth name of the local Bluetooth adapter.
+    since: "1.0.0"
+    platforms: [android]
+    returns: 
+      type: String
+      summary: Name of the local Bluetooth adapter. In case of error it can be null.
+
   - name: getPairedDevices
     summary: This method is use to get the devices that are paired to the local Bluetooth adapter.
     description: |
@@ -339,6 +347,19 @@ methods:
         nearby devices. 
     since: "1.0.0"
     platforms: [android]
+
+  - name: setName
+    summary: Sets the friendly Bluetooth name of the local Bluetooth adapter.
+    description: |
+        The Bluetooth adapter must be turned on before you can set the name. After turning the Bluetooth
+        on, wait for the [stateChanged](Modules.Bluetooth.stateChanged) event with [STATE_ON](Modules.Bluetooth.STATE_ON)
+        to get the updated value.
+    parameters:
+      - name: name
+        summary: Name for the local Bluetooth adapter. Bluetooth names can be maximum of 248 bytes
+            using UTF-8 encoding. Although, it may vary upon Bluetooth devices. Some can only display
+            first 40 characters, and some may be limited to just 20.
+        type: String
 
   - name: startDiscovery
     summary: Starts the remote device discovery process.

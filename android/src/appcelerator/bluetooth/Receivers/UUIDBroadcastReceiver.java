@@ -16,6 +16,9 @@ import java.util.HashMap;
 public class UUIDBroadcastReceiver extends BroadcastReceiver
 {
 	private BluetoothDeviceProxy btDeviceProxy;
+	private final String EVENT_FETCHED_UUIDS = "fetchedUUIDs";
+	private final String EVENT_FETCHED_UUIDS_DEVICE_KEY = "device";
+	private final String EVENT_FETCHED_UUIDS_KEYS = "UUIDs";
 
 	public UUIDBroadcastReceiver(BluetoothDeviceProxy btDeviceProxy)
 	{
@@ -39,9 +42,9 @@ public class UUIDBroadcastReceiver extends BroadcastReceiver
 					i++;
 				}
 				BluetoothDeviceProxy bluetoothDeviceProxy = new BluetoothDeviceProxy(device);
-				dict.put("device", bluetoothDeviceProxy);
-				dict.put("UUIDs", uuidStrings);
-				btDeviceProxy.fireEvent("fetchedUUIDs", dict);
+				dict.put(EVENT_FETCHED_UUIDS_DEVICE_KEY, bluetoothDeviceProxy);
+				dict.put(EVENT_FETCHED_UUIDS_KEYS, uuidStrings);
+				btDeviceProxy.fireEvent(EVENT_FETCHED_UUIDS, dict);
 				btDeviceProxy.getActivity().unregisterReceiver(this);
 				btDeviceProxy.setFetchuuidState(false);
 			}

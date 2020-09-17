@@ -19,6 +19,14 @@ import ti.modules.titanium.BufferProxy;
 public class BluetoothSocketProxy extends KrollProxy implements BluetoothSocketConnectedReaderWriter.IEventListener
 {
 	private static final String LCAT = "BluetoothSocketProxy";
+	private final String EVENT_SOCKET_KEY = "socket";
+	private final String EVENT_ERROR = "error";
+	private final String EVENT_ERROR_MESSAGE_KEY = "errorMessage";
+	private final String EVENT_CONNECTED = "connected";
+	private final String EVENT_DISCONNECTED = "disconnected";
+	private final String EVENT_DISCONNECTED_MESSAGE_KEY = "message";
+	private final String EVENT_DATA_RECEIVED = "receivedData";
+	private final String EVENT_DATA_RECEIVED_KEY = "data";
 	private BluetoothSocket btSocket;
 	private String uuid;
 	private boolean isSecure;
@@ -61,8 +69,8 @@ public class BluetoothSocketProxy extends KrollProxy implements BluetoothSocketC
 			try {
 				btSocket.connect();
 				state = socketState.connected;
-				dict.put("socket", this);
-				fireEvent("connected", dict);
+				dict.put(EVENT_SOCKET_KEY, this);
+				fireEvent(EVENT_CONNECTED, dict);
 				readerWriter = new BluetoothSocketConnectedReaderWriter(btSocket, readBufferSizeInBytes, this);
 			} catch (IOException connectException) {
 				Log.e(LCAT, "Exception on connect.", connectException);
@@ -70,9 +78,9 @@ public class BluetoothSocketProxy extends KrollProxy implements BluetoothSocketC
 					closeSocketQuietly(btSocket);
 				}
 				state = socketState.error;
-				dict.put("socket", this);
-				dict.put("errorMessage", connectException.getMessage());
-				fireEvent("error", dict);
+				dict.put(EVENT_SOCKET_KEY, this);
+				dict.put(EVENT_ERROR_MESSAGE_KEY, connectException.getMessage());
+				fireEvent(EVENT_ERROR, dict);
 				Log.e(LCAT, "Cannot connect, Exception: " + connectException.getMessage());
 			}
 		});
@@ -115,9 +123,9 @@ public class BluetoothSocketProxy extends KrollProxy implements BluetoothSocketC
 		} catch (IOException e) {
 			KrollDict dict = new KrollDict();
 			state = socketState.error;
-			dict.put("socket", this);
-			dict.put("errorMessage", "cannot create socket, Exception: " + e.getMessage());
-			fireEvent("error", dict);
+			dict.put(EVENT_SOCKET_KEY, this);
+			dict.put(EVENT_ERROR_MESSAGE_KEY, "cannot create socket, Exception: " + e.getMessage());
+			fireEvent(EVENT_ERROR, dict);
 			Log.e(LCAT, "Cannot create, Exception" + e.getMessage());
 		}
 	}
@@ -132,13 +140,13 @@ public class BluetoothSocketProxy extends KrollProxy implements BluetoothSocketC
 			}
 			btSocket.close();
 			state = socketState.disconnected;
-			dict.put("socket", this);
-			dict.put("message", "Socket is Disconnected");
-			fireEvent("disconnected", dict);
+			dict.put(EVENT_SOCKET_KEY, this);
+			dict.put(EVENT_DISCONNECTED_MESSAGE_KEY, "Socket is Disconnected");
+			fireEvent(EVENT_DISCONNECTED, dict);
 		} catch (IOException e) {
-			dict.put("socket", this);
-			dict.put("errorMessage", " trying to close socket but exception: " + e.getMessage());
-			fireEvent("error", dict);
+			dict.put(EVENT_SOCKET_KEY, this);
+			dict.put(EVENT_ERROR_MESSAGE_KEY, " trying to close socket but exception: " + e.getMessage());
+			fireEvent(EVENT_ERROR, dict);
 			Log.e(LCAT, "Cannot close, Exception: " + e.getMessage());
 		}
 	}
@@ -189,9 +197,9 @@ public class BluetoothSocketProxy extends KrollProxy implements BluetoothSocketC
 	public void onDataReceived(BufferProxy proxy)
 	{
 		KrollDict dict = new KrollDict();
-		dict.put("socket", this);
-		dict.put("data", proxy);
-		fireEvent("receivedData", dict);
+		dict.put(EVENT_SOCKET_KEY, this);
+		dict.put(EVENT_DATA_RECEIVED_KEY, proxy);
+		fireEvent(EVENT_DATA_RECEIVED, dict);
 	}
 
 	@Override
@@ -200,9 +208,9 @@ public class BluetoothSocketProxy extends KrollProxy implements BluetoothSocketC
 		closeSocketQuietly(btSocket);
 		state = socketState.error;
 		KrollDict dict = new KrollDict();
-		dict.put("socket", this);
-		dict.put("errorMessage", "Device connection was lost.");
-		fireEvent("error", dict);
+		dict.put(EVENT_SOCKET_KEY, this);
+		dict.put(EVENT_ERROR_MESSAGE_KEY, "Device connection was lost.");
+		fireEvent(EVENT_ERROR, dict);
 	}
 
 	private enum socketState { connecting, connected, disconnected, open, error }
