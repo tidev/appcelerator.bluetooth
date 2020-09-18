@@ -182,6 +182,19 @@ The bluetooth variable is a reference to the Module object.
 
 Please see the `example/` folder.
 
+## Observations
+
+- This is the android native behaviour as observed. On a bluetooth socket object with a given uuid,
+  if device A connects to device B (via BluetoothSocket connect() method), and then device A creates another
+  socket object with the same uuid and attempts to connect with the same device B, then it won’t be successful
+  to connect as a connected socket connection already exists. Moreover, while attempting for connection,
+  the already connected socket would get disconnected.
+  Recommendation: It would always be recommended to close the socket properly before trying to connect using
+  the newly created socket object on the same device and same uuid.
+
+- This is the android native behaviour as observed. While device scanning/discovery process, the same device can be found multiple times from the deviceFound event in span of 12 seconds.
+  This scenario should be handled by the application. More information for same is available in the apidoc of bluetooth module class in section deviceFound event and startDiscovery method.
+
 ## Building
 
 Simply run `appc run -p android --build-only` which will compile and package your module. 
