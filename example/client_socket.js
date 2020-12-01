@@ -1,5 +1,6 @@
 /* eslint-disable no-alert */
 function Socket(btdevice) {
+	var isFocused = true;
 	var device = btdevice;
 	var win = Titanium.UI.createWindow({
 		title: 'Client Socket',
@@ -116,7 +117,9 @@ function Socket(btdevice) {
 	});
 
 	clientSocket.addEventListener('error', function (e) {
-		alert(e.errorMessage);
+		if (isFocused) {
+			alert(e.errorMessage);
+		}
 		stateLabel.color = 'red';
 		stateLabel.text = 'Error';
 		exchangeDataBtn.hide();
@@ -151,6 +154,12 @@ function Socket(btdevice) {
 
 	win.addEventListener('close', function () {
 		clientSocket.close();
+	});
+	win.addEventListener('blur', function () {
+		isFocused = false;
+	});
+	win.addEventListener('focus', function () {
+		isFocused = true;
 	});
 
 	return win;
