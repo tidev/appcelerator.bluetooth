@@ -4,6 +4,8 @@ summary: Allows a Titanium application to use Bluetooth service.
 description: |
     The module is used for connecting your application via bluetooth.
 
+    <p class="note">Note: This feature requires a Pro or Enterprise subscription. More infos <a href="https://www.appcelerator.com/pricing/" target="_blank">here</a>!</p>
+
     ### Getting Started
     - Add the module as a dependency to your application by adding a **`<module>`** item to the
       **`<modules>`** element of your `tiapp.xml` file:
