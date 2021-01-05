@@ -22,6 +22,7 @@ module.exports = config => {
 		basePath: '../..',
 		frameworks: [ 'jasmine', 'projectManagerHook' ],
 		files: [
+			'test/unit/specs/bluetoothinit.spec.js',
 			'test/unit/specs/**/*spec.js'
 		],
 		reporters: [ 'mocha', 'junit' ],
