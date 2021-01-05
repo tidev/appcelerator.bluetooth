@@ -244,6 +244,28 @@ methods:
         summary: Dictionary which contains value for name, uuid and security level.
         type: ServerSocketType
 
+  - name: disable
+    summary: Disables the local Bluetooth adapter.
+    description: |
+        Listen for the [stateChanged](Modules.Bluetooth.stateChanged) event to be notified when the local
+        Bluetooth adapter is turning off.
+    since: "1.0.0"
+    platforms: [android]
+    returns:
+      type: "Boolean"
+      summary: "Returns true if the process is initiated successfully or when the bluetooth is already off."
+
+  - name: enable
+    summary: Enables the local Bluetooth adapter.
+    description: |
+        Listen for the [stateChanged](Modules.Bluetooth.stateChanged) event to be notified when the local
+        Bluetooth adapter is turning on.
+    since: "1.0.0"
+    platforms: [android]
+    returns:
+      type: "Boolean"
+      summary: "Returns true if the process is initiated successfully or when the bluetooth is already on."
+
   - name: ensureDiscoverable
     summary: Make the local device discoverable to other devices. 
     description: |

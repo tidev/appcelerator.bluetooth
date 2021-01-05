@@ -81,6 +81,26 @@ public class BluetoothModule extends KrollModule
 	}
 
 	@Kroll.method
+	public boolean enable()
+	{
+		if (!isSupported()) {
+			Log.e(LCAT, BT_UNSUPPORTED);
+			return false;
+		}
+		return btAdapter.enable();
+	}
+
+	@Kroll.method
+	public boolean disable()
+	{
+		if (!isSupported()) {
+			Log.e(LCAT, BT_UNSUPPORTED);
+			return false;
+		}
+		return btAdapter.disable();
+	}
+
+	@Kroll.method
 	public boolean isSupported()
 	{
 		return btAdapter != null;
