@@ -1,0 +1,153 @@
+---
+name: Modules.Bluetooth.BluetoothSocket
+summary: A connected or connecting Bluetooth socket.
+description: |
+    The `BluetoothSocket` object used to make a connection to the remote device. It is used to both
+    initiate an outgoing connection and to manage the connection.
+extends: Titanium.Proxy
+createable: false
+since: "1.0.0" 
+platforms: [android]
+methods:
+  - name: connect
+    summary: Starts the connection to the remote device.
+    description: |
+        This call will block until a connection is established or the connection fails. Listen for 
+        the [connected](Modules.Bluetooth.BluetoothSocket.connected) event to be notified when the 
+        connection is established.
+    since: "1.0.0"
+    platforms: [android]
+
+  - name: isConnected
+    summary: Determines whether there is an active connection with the remote device.
+    since: "1.0.0"
+    platforms: [android]
+    returns: 
+      type: "Boolean"
+      summary: "connection status of this socket"
+
+  - name: isConnecting
+    summary: Determines whether there is an ongoing connection attempt in progress.
+    since: "1.0.0"
+    platforms: [android]
+    returns: 
+      type: "Boolean"
+      summary: "True if connection attempt in progress false otherwise" 
+
+  - name: cancelConnect
+    summary: Drops the ongoing connection attempt if in progress.
+    description: |
+        If there is no connection attempt in progress, it does nothing.
+    since: "1.0.0"
+    platforms: [android]
+
+  - name: close
+    summary: Closes the socket.
+    description: |
+        Listen for the [disconnected](Modules.Bluetooth.BluetoothSocket.disconnected) event to be
+        notified when socket is closed or the [error](Modules.Bluetooth.BluetoothSocket.error) in
+        case of failure.
+    since: "1.0.0"
+    platforms: [android]
+
+  - name: getReadBufferSize
+    summary: Get the size of the read buffer in bytes.
+    since: "1.0.0"
+    platforms: [android]
+    returns: 
+      type: Number 
+      summary: "Size of the read buffer in bytes."
+
+  - name: getRemoteDevice
+    summary: Get the remote device this socket is associated with.
+    since: "1.0.0"
+    platforms: [android]
+    returns: 
+      type: Modules.Bluetooth.BluetoothDevice  
+      summary: "The object representing the device to which this socket is connected to."
+
+  - name: setReadBufferSize
+    summary: Sets the size of the read buffer in bytes.
+    description: |
+        You can set the read buffer size at any time, but it will only take effect during the next connection.
+        By default, the buffer size is 4*1024 bytes.
+    since: "1.0.0"
+    platforms: [android]
+    parameters:
+      - name: newReadBufferSize
+        summary: The desired size of the read buffer in bytes.
+        type: Number
+  
+  - name: write
+    summary: Sends an array of bytes over the socket.
+    description: |
+        If the socket is not connected, then this method will throw an error.
+    since: "1.0.0"
+    platforms: [android]
+    parameters: 
+      - name: buffer
+        summary: Represents the data to be sent over the socket.
+        type: Titanium.Buffer
+
+properties:
+  - name: readBufferSize
+    summary: The size of the read buffer in bytes. By default, the buffer size is 4*1024 bytes.
+    type: Number
+    since: "1.0.0"
+    platforms: [android]
+
+events:
+  - name: connected
+    summary: Fired when the connection through the socket is established.
+    since: "1.0.0"
+    platforms: [android]
+    properties:
+      - name: socket
+        summary: The socket through which the connection was made.
+        type: Modules.Bluetooth.BluetoothSocket
+
+  - name: disconnected
+    summary: Fired when connection to the socket is lost.
+    since: "1.0.0"
+    platforms: [android]
+    properties:
+      - name: socket
+        summary: The socket on which the data was received.
+        type: Modules.Bluetooth.BluetoothSocket
+
+      - name: message
+        summary: The localized message of the exception that accompanies the disconnect event. The
+            localized message is `Socket is Disconnected`.
+        type: String
+
+  - name: error
+    summary: Fired when an operation fails.
+    since: "1.0.0"
+    platforms: [android]
+    properties:
+      - name: socket
+        summary: The socket that encounter the error.
+        type: Modules.Bluetooth.BluetoothSocket
+
+      - name: errorMessage
+        summary: The error message for the error encountered on the [socket](Modules.Bluetooth.BluetoothSocket.error.socket).
+          The error can be encountered while performing any socket operations like- socket connecting to remote device,
+          cancelling the connecting operation, closing the socket, socket connection gets lost etc.
+          Note:- If the error message "Device connection was lost." comes, that signifies the connection with
+          the socket is lost which can occur if the device goes out of bluetooth range, remote device
+          deliberately disconnects the connection, etc.
+        type: String
+
+  - name: receivedData
+    summary: Fired when data is received on this socket.
+    since: "1.0.0"
+    platforms: [android]
+    properties:
+      - name: socket
+        summary: The socket on which the data was received.
+        type: Modules.Bluetooth.BluetoothSocket
+
+      - name: data
+        summary: A buffer object holding the data received.
+        type: Titanium.Buffer
+        

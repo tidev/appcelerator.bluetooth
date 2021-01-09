@@ -1,0 +1,94 @@
+---
+name: Modules.Bluetooth.BluetoothDevice
+summary: Represents a remote bluetooth device.
+description: |
+    A `BluetoothDevice` object lets you create a connection with the remote device or query information 
+    about it, such as the name, address, UUID and type.
+extends: Titanium.Proxy
+createable: false
+since: "1.0.0" 
+platforms: [android]
+methods:
+  - name: fetchUUIDs
+    summary: Perform a service discovery on the remote device to get the UUIDs supported.
+    description: |
+        The outcome of the discovery is reported via the [fetchedUUIDs](Modules.Bluetooth.BluetoothDevice.fetchedUUIDs) event.
+    since: "1.0.0"
+    platforms: [android]
+    returns:
+      type: "Boolean"
+      summary: "Returns true if service discovery started successfully."
+
+  - name: createSocket
+    summary: Creates an RFCOMM Bluetooth socket.
+    description: |
+        This method, when called, creates an RFCOMM Bluetooth socket ready to start an outgoing 
+        connection to the remote device using SDP lookup of UUID.
+    since: "1.0.0"
+    platforms: [android]
+    returns:
+      type: "Modules.Bluetooth.BluetoothSocket"
+      summary: "created socket for the device"
+    parameters:
+      - name: uuid
+        summary: UUID of the service this socket will connect to.
+        type: String
+      - name: secure
+        summary: Determines whether the connection will be secure or insecure.
+        type: Boolean
+        optional: true
+
+properties:
+  - name: address
+    summary: Address of the remote Bluetooth device.
+    description: |
+        	This property returns the Bluetooth hardware address as string. For example, "00:11:22:AA:BB:CC".
+    since: "1.0.0"
+    platforms: [android]
+    type: String
+    permission: read-only
+
+  - name: name
+    summary: Name of the remote Bluetooth device.
+    description: |
+        This property returns the Bluetooth name or null if there was a problem.
+    since: "1.0.0"
+    platforms: [android]
+    type: String
+    permission: read-only
+  
+  - name: type
+    summary: Type of the remote Bluetooth device.
+    description: |
+        Possible values are DEVICE_TYPE_UNKNOWN, DEVICE_TYPE_CLASSIC, DEVICE_TYPE_DUAL and 
+        DEVICE_TYPE_LE.
+    since: "1.0.0"
+    platforms: [android]
+    type: Number
+    permission: read-only
+
+  - name: uUIDs
+    summary: The supported UUIDs of the remote device.
+    description:  |
+        This property does not start a service discovery procedure to retrieve the UUIDs from the 
+        remote device. Rather, the local cached copy of the service UUIDs are returned. Can be null
+        on error.
+    since: "1.0.0"
+    platforms: [android]
+    type: Array<String>
+    permission: read-only
+
+events:
+  - name: fetchedUUIDs
+    summary: Fired when the UUIDs of the remote device are received using SDP.
+    since: "1.0.0"
+    platforms: [android]
+    properties:
+      - name: device
+        summary: The Bluetooth device in question.
+        type: Modules.Bluetooth.BluetoothDevice
+
+      - name: UUIDs
+        summary: The service UUIDs of the device.
+        type: Array<String>
+    
