@@ -1,0 +1,20 @@
+{
+  "extends": [ "axway/env-titanium", "axway/env-node" ],
+  "parserOptions": {
+    "ecmaVersion": 2015,
+    "sourceType": "script"
+  },
+  "overrides": [
+    {
+      "files": [ "dangerfile.js" ],
+      "parserOptions": {
+        "ecmaVersion": 2017,
+        "sourceType": "module"
+      }
+    }
+  ],
+  "globals": {
+    "bluetooth": "readonly",
+    "UUID": "readonly"
+  }
+}
