@@ -148,7 +148,7 @@ function Socket(btdevice) {
 	});
 
 	exchangeDataBtn.addEventListener('click', function () {
-		var DataCommunication = require('data_communication.js');
+		var DataCommunication = require('data_communication.js'); // to use image transfer, make use of  'image_transfer/image_receiver.js' file here.
 		new DataCommunication(clientSocket).open();
 	});
 
