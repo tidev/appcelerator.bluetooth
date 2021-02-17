@@ -112,7 +112,7 @@ function Server(btServerSocket) {
 			title: 'Connection Received'
 		});
 		dialog.addEventListener('click', function (b) {
-			var DataCommunication = require('data_communication.js');
+			var DataCommunication = require('data_communication.js'); // to use image transfer, make use of  'image_transfer/image_sender.js' file here.
 			new DataCommunication(socket).open();
 			win.close();
 		});
