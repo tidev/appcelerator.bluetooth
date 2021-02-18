@@ -28,7 +28,7 @@
     "@commitlint/cli": "^8.3.5",
     "@commitlint/config-conventional": "^8.3.4",
     "@seadub/clang-format-lint": "0.0.2",
-    "@seadub/danger-plugin-dependencies": "^0.1.0",
+    "@seadub/danger-plugin-dependencies": "^1.0.0",
     "@seadub/danger-plugin-junit": "^0.1.2",
     "@seadub/danger-plugin-titanium-module": "0.0.7",
     "clang-format": "^1.2.3",
