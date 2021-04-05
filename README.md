@@ -7,7 +7,9 @@ to communicate using Bluetooth. It can be used to find the devices that are eith
 
 To access this module from JavaScript, you would do the following:
     
-    var bluetooth = require("appcelerator.bluetooth");
+``` js
+var bluetooth = require("appcelerator.bluetooth");
+```
 
 The bluetooth variable is a reference to the Module object.
 
@@ -15,7 +17,7 @@ The bluetooth variable is a reference to the Module object.
 
 - Edit the `manifest` with following `uses-permission` element to the Android manifest section of the
   tiapp.xml file.
-  ```
+  ``` xml
   <ti:app>
     <android xmlns:android="http://schemas.android.com/apk/res/android">
       <manifest>
@@ -28,7 +30,7 @@ The bluetooth variable is a reference to the Module object.
   ```
 
 - Set the ``` <module> ``` element in tiapp.xml, such as this: 
-  ```
+  ``` xml
   <modules>
       <module platform="android">appcelerator.bluetooth</module>
   </modules>
@@ -44,9 +46,8 @@ The bluetooth variable is a reference to the Module object.
 
   #### Example
 
-  ```
-  if(bluetooth.isSupported())
-  {
+  ``` js
+  if (bluetooth.isSupported()) {
       Ti.API.info('Bluetooth is supported');
   } else {
       Ti.API.info('Bluetooth is not supported in this device');
@@ -64,7 +65,7 @@ The bluetooth variable is a reference to the Module object.
 
   #### Example
 
-  ```
+  ``` js
   var dict = bluetooth.getPairedDevices();
   var device = []; // array for paired devices.
   if (dict.success) {
@@ -90,7 +91,7 @@ The bluetooth variable is a reference to the Module object.
 
   #### Example
 
-  ```
+  ``` js
   // device can be obtained by either getRemoteDevice method, getPairedDevice method or via deviceFound event.
   var socket = device.createSocket('8ce255c0-200a-11e0-ac64-0800200c9a66', false);
   // To connect the socket
@@ -111,7 +112,7 @@ The bluetooth variable is a reference to the Module object.
 
   #### Example
 
-  ```
+  ``` js
   var serverSocket = bluetooth.createServerSocket({
 			name: 'Test_Server_Socket',
 			uuid: '8ce255c0-200a-11e0-ac64-0800200c9a66',
@@ -134,7 +135,7 @@ The bluetooth variable is a reference to the Module object.
 
   #### Example
 
-  ```
+  ``` js
   // To get the name
   var btName = bluetooth.name;
 
@@ -151,7 +152,7 @@ The bluetooth variable is a reference to the Module object.
 
   #### Example
 
-  ```
+  ``` js
   var state = bluetooth.state;
   if(state === bluetooth.STATE_ON)
   {
@@ -200,7 +201,7 @@ simply update the file serversocket.js(line#115) and client_socket.js(line#151) 
 
 Simply run `appc run -p android --build-only` which will compile and package your module. 
 
-Copy the module zip file into the root folder of your Titanium application or in the Titanium system folder (e.g. /Library/Application Support/Titanium).
+Copy the module zip file into the root folder of your Titanium application or in the Titanium system folder (e.g. `/Library/Application Support/Titanium`).
 
 ## Author
 
