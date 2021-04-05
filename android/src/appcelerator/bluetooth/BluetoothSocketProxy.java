@@ -176,7 +176,7 @@ public class BluetoothSocketProxy extends KrollProxy implements BluetoothSocketC
 			Log.e(LCAT, "attempt to write data, but socket not connected. SocketState = " + state);
 		}
 
-		readerWriter.write(bufferProxy);
+		readerWriter.send(bufferProxy);
 	}
 
 	@Kroll.method

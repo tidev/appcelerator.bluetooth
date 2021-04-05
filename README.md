@@ -180,7 +180,8 @@ The bluetooth variable is a reference to the Module object.
 
 ## Example
 
-Please see the `example/` folder.
+Please see the `example/` folder. By default, the example would work on exchanging of the chat data. If you would like to exchange the image,
+simply update the file serversocket.js(line#115) and client_socket.js(line#151) to include the image_sender.js and image_receiver.js file there.
 
 ## Observations
 
