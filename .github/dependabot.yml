@@ -1,0 +1,56 @@
+version: 2
+updates:
+- package-ecosystem: npm
+  directory: "/"
+  schedule:
+    interval: daily
+    time: "11:00"
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: karma
+    versions:
+    - 6.1.1
+    - 6.1.2
+    - 6.2.0
+    - 6.3.0
+    - 6.3.1
+  - dependency-name: husky
+    versions:
+    - 5.0.9
+    - 5.1.1
+    - 5.1.2
+    - 5.1.3
+    - 5.2.0
+  - dependency-name: eslint
+    versions:
+    - 7.20.0
+    - 7.21.0
+    - 7.22.0
+  - dependency-name: "@commitlint/cli"
+    versions:
+    - 12.0.0
+    - 12.0.1
+  - dependency-name: danger
+    versions:
+    - 10.6.3
+  - dependency-name: lint-staged
+    versions:
+    - 10.5.4
+  - dependency-name: eslint-config-axway
+    versions:
+    - 5.0.0
+  - dependency-name: eslint-plugin-jasmine
+    versions:
+    - 4.1.2
+  - dependency-name: "@seadub/danger-plugin-titanium-module"
+    versions:
+    - 1.0.0
+  - dependency-name: node-fetch
+    versions:
+    - 2.6.1
+  - dependency-name: "@seadub/danger-plugin-dependencies"
+    versions:
+    - 1.0.0
+  - dependency-name: ini
+    versions:
+    - 1.3.8
