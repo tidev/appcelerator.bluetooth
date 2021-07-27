@@ -15,20 +15,6 @@ The bluetooth variable is a reference to the Module object.
 
 ## Getting Started
 
-- Edit the `manifest` with following `uses-permission` element to the Android manifest section of the
-  tiapp.xml file.
-  ``` xml
-  <ti:app>
-    <android xmlns:android="http://schemas.android.com/apk/res/android">
-      <manifest>
-        <uses-permission android:name="android.permission.BLUETOOTH" />
-        <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
-        <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/> 
-      </manifest>
-    </android>
-  </ti:app>
-  ```
-
 - Set the ``` <module> ``` element in tiapp.xml, such as this: 
   ``` xml
   <modules>

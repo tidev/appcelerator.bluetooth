@@ -125,16 +125,15 @@ var btRequestPermissionbutton = Ti.UI.createButton({
 });
 
 btRequestPermissionbutton.addEventListener('click', function () {
-	var requestPermissionToast = Ti.UI.createNotification({
-		duration: Ti.UI.NOTIFICATION_DURATION_LONG
+	bluetooth.requestPermissions((e) => {
+		let message = e.success ? 'Permission granted' : 'Permission denied';
+		const toast = Ti.UI.createNotification({
+			duration: Ti.UI.NOTIFICATION_DURATION_LONG,
+			message: message
+		});
+		toast.show();
+		Ti.API.info(message);
 	});
-	if (!bluetooth.isRequiredPermissionsGranted()) {
-		bluetooth.requestAccessFinePermission();
-	} else {
-		requestPermissionToast.message = 'Required Permission is already granted';
-		requestPermissionToast.show();
-		Ti.API.info('Required Permission is already granted');
-	}
 });
 
 bluetooth.addEventListener('stateChanged', function (e) {

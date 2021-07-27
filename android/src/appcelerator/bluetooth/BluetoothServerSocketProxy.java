@@ -7,14 +7,17 @@ package appcelerator.bluetooth;
 
 import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
+import android.content.Context;
 import android.util.Log;
 import java.io.IOException;
 import java.util.UUID;
 import org.appcelerator.kroll.KrollDict;
 import org.appcelerator.kroll.KrollProxy;
 import org.appcelerator.kroll.annotations.Kroll;
+import org.appcelerator.titanium.TiApplication;
 
 @Kroll.proxy
 @SuppressLint("LongLogTag")
@@ -45,9 +48,16 @@ public class BluetoothServerSocketProxy extends KrollProxy
 	@Kroll.method
 	public void startAccept(@Kroll.argument(optional = true) boolean keepListening)
 	{
-
 		if (state != ServerSocketState.Open) {
 			Log.d(TAG, "startAccept: unable to startAccept as current state = " + state);
+			return;
+		}
+
+		TiApplication context = TiApplication.getInstance();
+		BluetoothManager bluetoothManager = (BluetoothManager) context.getSystemService(Context.BLUETOOTH_SERVICE);
+		BluetoothAdapter bluetoothAdapter = (bluetoothManager != null) ? bluetoothManager.getAdapter() : null;
+		if (bluetoothAdapter == null) {
+			Log.e(TAG, "startAccept: bluetooth not supported on device.");
 			return;
 		}
 
@@ -55,11 +65,9 @@ public class BluetoothServerSocketProxy extends KrollProxy
 
 		try {
 			if (isSecure) {
-				serverSocket = BluetoothAdapter.getDefaultAdapter().listenUsingRfcommWithServiceRecord(
-					name, UUID.fromString(uuid));
+				serverSocket = bluetoothAdapter.listenUsingRfcommWithServiceRecord(name, UUID.fromString(uuid));
 			} else {
-				serverSocket = BluetoothAdapter.getDefaultAdapter().listenUsingInsecureRfcommWithServiceRecord(
-					name, UUID.fromString(uuid));
+				serverSocket = bluetoothAdapter.listenUsingInsecureRfcommWithServiceRecord(name, UUID.fromString(uuid));
 			}
 		} catch (IOException e) {
 			Log.e(TAG, "startAccept: unable to startAccept due to exception.", e);

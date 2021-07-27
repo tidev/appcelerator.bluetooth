@@ -11,10 +11,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Parcelable;
 import appcelerator.bluetooth.BluetoothDeviceProxy;
+import java.util.ArrayList;
 import java.util.HashMap;
+import org.appcelerator.titanium.TiApplication;
 
 public class UUIDBroadcastReceiver extends BroadcastReceiver
 {
+	private static final ArrayList<UUIDBroadcastReceiver> receiverList = new ArrayList<>(1);
 	private BluetoothDeviceProxy btDeviceProxy;
 	private final String EVENT_FETCHED_UUIDS = "fetchedUUIDs";
 	private final String EVENT_FETCHED_UUIDS_DEVICE_KEY = "device";
@@ -23,12 +26,12 @@ public class UUIDBroadcastReceiver extends BroadcastReceiver
 	public UUIDBroadcastReceiver(BluetoothDeviceProxy btDeviceProxy)
 	{
 		this.btDeviceProxy = btDeviceProxy;
+		receiverList.add(this);
 	}
 
 	@Override
 	public void onReceive(Context context, Intent intent)
 	{
-
 		String action = intent.getAction();
 		HashMap<String, Object> dict = new HashMap<>();
 		if (BluetoothDevice.ACTION_UUID.equals(action)) {
@@ -45,9 +48,25 @@ public class UUIDBroadcastReceiver extends BroadcastReceiver
 				dict.put(EVENT_FETCHED_UUIDS_DEVICE_KEY, bluetoothDeviceProxy);
 				dict.put(EVENT_FETCHED_UUIDS_KEYS, uuidStrings);
 				btDeviceProxy.fireEvent(EVENT_FETCHED_UUIDS, dict);
-				btDeviceProxy.getActivity().unregisterReceiver(this);
+				unregister();
 				btDeviceProxy.setFetchuuidState(false);
 			}
+		}
+	}
+
+	public void unregister()
+	{
+		try {
+			receiverList.remove(this);
+			TiApplication.getInstance().unregisterReceiver(this);
+		} catch (Exception ex) {
+		}
+	}
+
+	public static void unregisterAll()
+	{
+		while (!receiverList.isEmpty()) {
+			receiverList.get(0).unregister();
 		}
 	}
 }

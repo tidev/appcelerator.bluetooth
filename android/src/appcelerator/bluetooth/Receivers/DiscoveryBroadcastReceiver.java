@@ -11,11 +11,14 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import appcelerator.bluetooth.BluetoothDeviceProxy;
+import java.util.ArrayList;
 import java.util.HashMap;
 import org.appcelerator.kroll.KrollModule;
+import org.appcelerator.titanium.TiApplication;
 
 public class DiscoveryBroadcastReceiver extends BroadcastReceiver
 {
+	private static final ArrayList<DiscoveryBroadcastReceiver> receiverList = new ArrayList<>(1);
 	private KrollModule krollModule;
 	private final String EVENT_DEVICE_FOUND = "deviceFound";
 	private final String EVENT_DEVICE_FOUND_KEY = "device";
@@ -26,6 +29,7 @@ public class DiscoveryBroadcastReceiver extends BroadcastReceiver
 	public DiscoveryBroadcastReceiver(KrollModule krollModule)
 	{
 		this.krollModule = krollModule;
+		receiverList.add(this);
 	}
 
 	@Override
@@ -48,7 +52,23 @@ public class DiscoveryBroadcastReceiver extends BroadcastReceiver
 			krollModule.fireEvent(EVENT_DISCOVERY_STARTED, "discovery is started");
 		} else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
 			krollModule.fireEvent(EVENT_DISCOVERY_FINISHED, "discovery is finished");
-			krollModule.getActivity().unregisterReceiver(this);
+			unregister();
+		}
+	}
+
+	public void unregister()
+	{
+		try {
+			receiverList.remove(this);
+			TiApplication.getInstance().unregisterReceiver(this);
+		} catch (Exception ex) {
+		}
+	}
+
+	public static void unregisterAll()
+	{
+		while (!receiverList.isEmpty()) {
+			receiverList.get(0).unregister();
 		}
 	}
 }
