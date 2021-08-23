@@ -3,7 +3,7 @@
 module.exports = config => {
 	config.set({
 		basePath: '../..',
-		frameworks: [ 'jasmine', 'projectManagerHook' ],
+		frameworks: [ 'jasmine' ],
 		files: [
 			'test/unit/specs/bluetoothinit.spec.js',
 			'test/unit/specs/**/*spec.js'
