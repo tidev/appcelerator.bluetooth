@@ -149,10 +149,10 @@ function deleteAndCreateNewImage() {
 	}
 	let imgFile = Ti.Filesystem.getFile(imageDir.resolve(), 'image.png');
 	if (imgFile.exists()) {
-		let deleteResult = imgFile.deleteFile();
+		imgFile.deleteFile();
 	}
 	if (!imgFile.exists()) {
-		let createResult = imgFile.createFile();
+		imgFile.createFile();
 	}
 	return imgFile;
 }

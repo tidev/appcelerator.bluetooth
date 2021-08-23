@@ -53,7 +53,7 @@ describe('BluetoothSocket ', function () {
 			});
 
 			it('attempting connect for a random uuid fires the error event', done => {
-				socket.on('error', e => {
+				socket.on('error', () => {
 					done();
 				});
 
