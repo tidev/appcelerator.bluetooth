@@ -26,19 +26,6 @@ description: |
       ``` javascript
       bluetooth.isSupported();
       ```
-    - Add the following `uses-permission` element to the Android manifest section of the tiapp.xml
-        file. You may need to add the `manifest elements.
-        ``` xml
-        <ti:app>
-            <android xmlns:android="http://schemas.android.com/apk/res/android">
-                <manifest>
-                    <uses-permission android:name="android.permission.BLUETOOTH" />
-                    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
-                    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/> 
-                </manifest>
-            </android>
-        </ti:app>
-        ```
 
     ### Example application
       Please see the /modules/android/appcelerator.bluetooth/x.y.z (version of module)/example folder.
@@ -355,9 +342,18 @@ methods:
   - name: isRequiredPermissionsGranted
     summary: Determines whether the required permissions are granted or not.
     description: |
-        The type of permissions included are, BLUETOOTH, BLUTOOTH_ADMIN and ACCESS_FINE_LOCATION.
-        ACCESS_FINE_LOCATION permission is provided at runtime by the app user. To request this permission
-        use [requestAccessFinePermission](Modules.Bluetooth.requestAccessFinePermission) method
+        Checks if the following permissions are defined and have been granted by the user:
+
+        * `android.permission.ACCESS_FINE_LOCATION`
+        * `android.permission.BLUETOOTH`
+        * `android.permission.BLUETOOTH_ADMIN`
+        * `android.permission.BLUETOOTH_ADVERTISE`
+        * `android.permission.BLUETOOTH_CONNECT`
+        * `android.permission.BLUETOOTH_SCAN`
+
+        If this method returns `false`, then you should call the
+        [requestPermissions](Modules.Bluetooth.requestPermissions) method to display a dialog
+        requesting permissions from the user.
     since: "1.0.0"
     platforms: [android]
     returns:
@@ -373,11 +369,44 @@ methods:
       summary: "Returns true if Bluetooth is supported on the device, false otherwise."
 
   - name: requestAccessFinePermission
-    summary: Request for the `ACCESS_FINE_LOCATION`. This permission is necessary for the Bluetooth device to scan the nearby devices.
+    summary: Displays a dialog requesting location permission from the user.
     description: |
-        If this permission is not requested, startDiscovery method will not be able to scan the
-        nearby devices. 
+        Displays a dialog requesting the user for the `ACCESS_FINE_LOCATION` permission.
+        This permission is required by the [startDiscovery](Modules.Bluetooth.startDiscovery) method.
+        The dialog will not be dispayed if permission has already been granted.
+
+        The given optional callback argument and returned `Promise` will provide a `success` property
+        indicating if permission was granted or not.
+    parameters:
+      - name: callback
+        summary: Function to be invoked indicating if permission was granted or not.
+        type: Callback<Titanium.Android.RequestPermissionAccessResult>
+        optional: true
+    returns:
+      summary: As of 2.0.0, this method will return a `Promise` whose resolved value is equivalent to that passed to the optional callback argument.
+      type: Promise<Titanium.Android.RequestPermissionAccessResult>
     since: "1.0.0"
+    platforms: [android]
+
+  - name: requestPermissions
+    summary: Displays a dialog requesting all permissions needed by the bluetooth module from the user.
+    description: |
+        Displays a dialog requesting the user for the `ACCESS_FINE_LOCATION` permission.
+        Will also request the `BLUETOOTH_ADVERTISE`, `BLUETOOTH_CONNECT`, and `BLUETOOTH_SCAN` permissions
+        if running on Android 12 or higher. These permission are required by this module to
+        discover devices and to make the app's device discoverable by other devices.
+
+        The given optional callback argument and returned `Promise` will provide a `success` property
+        indicating if permissions were granted or not.
+    parameters:
+      - name: callback
+        summary: Function to be invoked indicating if permissions were granted or not.
+        type: Callback<Titanium.Android.RequestPermissionAccessResult>
+        optional: true
+    returns:
+      summary: Returns a `Promise` whose resolved value is equivalent to that passed to the optional callback argument.
+      type: Promise<Titanium.Android.RequestPermissionAccessResult>
+    since: "2.0.0"
     platforms: [android]
 
   - name: setName

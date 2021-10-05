@@ -111,7 +111,7 @@ function Server(btServerSocket) {
 			message: 'Bluetooth Socket Accepted.\nDevice Name = ' + btDeviceProxy.name + '\nDevice Address = ' + btDeviceProxy.address,
 			title: 'Connection Received'
 		});
-		dialog.addEventListener('click', function (b) {
+		dialog.addEventListener('click', function () {
 			var DataCommunication = require('data_communication.js'); // to use image transfer, make use of  'image_transfer/image_sender.js' file here.
 			new DataCommunication(socket).open();
 			win.close();

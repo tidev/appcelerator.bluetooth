@@ -1,11 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ti:module xmlns:ti="http://ti.appcelerator.org" xmlns:android="http://schemas.android.com/apk/res/android">
-	<!--
-		Similar to tiapp.xml, but contains module/platform specific
-		configuration in <iphone> and <android> sections
-	-->
-	<iphone>
-	</iphone>
 	<android xmlns:android="http://schemas.android.com/apk/res/android">
+		<manifest>
+			<!-- Fine location permission needed for bluetooth device discovery. -->
+			<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+			<uses-permission android:name="android.permission.ACCESS_COURSE_LOCATION"/>
+
+			<!-- Bluetooth permission needed by Android 12 and higher. -->
+			<uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE"/>
+			<uses-permission android:name="android.permission.BLUETOOTH_CONNECT"/>
+			<uses-permission android:name="android.permission.BLUETOOTH_SCAN"/>
+
+			<!-- Legacy bluetooth permissions needed by Android 11 and older OS versions. -->
+			<!-- ACTION_REQUEST_DISCOVERABLE needs BLUETOOTH permission on Android 12 even though docs say otherwise. -->
+			<uses-permission android:name="android.permission.BLUETOOTH"/>
+			<uses-permission android:name="android.permission.BLUETOOTH_ADMIN" android:maxSdkVersion="30"/>
+		</manifest>
 	</android>
 </ti:module>
