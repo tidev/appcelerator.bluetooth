@@ -26,7 +26,7 @@
   },
   "homepage": "https://github.com/appcelerator-modules/appcelerator.bluetooth#readme",
   "devDependencies": {
-    "@commitlint/cli": "^12.1.1",
+    "@commitlint/cli": "^17.0.3",
     "@commitlint/config-conventional": "^12.1.1",
     "@seadub/clang-format-lint": "0.0.2",
     "@seadub/danger-plugin-dependencies": "^0.1.0",
