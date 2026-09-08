@@ -15,4 +15,4 @@ name: Bluetooth
 moduleid: appcelerator.bluetooth
 guid: d4c8bc3c-dce5-48b4-9c7e-5ccb5102f205
 platform: android
-minsdk: 12.7.0.GA
+minsdk: 12.7.0
